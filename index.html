@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Lean Lanes – ein Lernspiel im MOBA-Stil für Gesprächsfragen zur Stelle Lean Consultant.">
+<title>Lean Lanes · Lernspiel Lean Consultant</title>
+<style>
+:root{--bg:#0e1015;--p1:#181b23;--p2:#20242f;--p3:#2a2f3c;--line:#323848;--ink:#ece9e2;--mute:#9ba1ae;--gold:#e8b84a;--red:#d0503f;--green:#5fb35a;--xp:#5b90dc;--acc:#d9a441;--read:#f3f1ec}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#1d2230 0%,var(--bg) 60%) fixed;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--acc)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+main{padding:16px 0 60px}
+h1{font-size:1.7rem;margin:.2em 0 .4em;letter-spacing:.02em}
+h2{font-size:1.25rem;margin:.2em 0 .5em}
+h3{font-size:.78rem;margin:0 0 .5em;color:var(--mute);text-transform:uppercase;letter-spacing:.09em;font-weight:700}
+h4{margin:.1em 0 .35em;font-size:1.02rem}
+p{margin:.35em 0 .7em}
+.hint{font-size:.85rem;color:var(--mute)}
+.panel{background:linear-gradient(180deg,var(--p2),var(--p1));border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:860px){.grid4{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}html{font-size:17px}}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.btn{font:inherit;font-size:.95rem;padding:10px 16px;border-radius:8px;border:1px solid #444b5c;background:linear-gradient(180deg,#2d3240,#232733);cursor:pointer;color:var(--ink);text-decoration:none;display:inline-block;line-height:1.3;transition:transform .08s,border-color .15s}
+.btn:hover{border-color:var(--acc)}
+.btn:active{transform:translateY(1px)}
+.btn.gold{background:linear-gradient(180deg,#e6b54a,#b9862a);border-color:#f0c868;color:#1b1407;font-weight:700}
+.btn.red{background:linear-gradient(180deg,#b8463a,#8c2f27);border-color:#d0605a;color:#fff;font-weight:650}
+.btn.big{font-size:1.1rem;padding:14px 22px}
+.btn.sm{font-size:.8rem;padding:5px 10px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+textarea,input[type=text]{width:100%;font:inherit;font-size:1rem;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#11141b;color:var(--ink)}
+textarea{resize:vertical;min-height:90px;line-height:1.5}
+textarea:focus{outline:2px solid var(--acc);outline-offset:0}
+.chip{display:inline-block;font-size:.74rem;padding:2px 9px;border-radius:99px;background:#2c3140;color:#c9ccd4;white-space:nowrap;font-weight:650}
+.chip.sitzt{background:#1f3a22;color:#8fe08a}.chip.wackelt{background:#43361a;color:#f1c56b}.chip.neu{background:#45201c;color:#f2938a}
+.chip.grp{background:#1c2b3e;color:#9ec3f0}
+.gap{background:#e4f2f5;color:#0f4c5c;border:1px dashed #4f9fb2;padding:0 6px;border-radius:6px;font-style:italic;font-weight:600}
+/* HUD */
+.hud{position:sticky;top:0;z-index:10;background:rgba(14,16,21,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.hudrow{max-width:1060px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);text-decoration:none;font-size:.95rem}
+.stat{display:flex;align-items:center;gap:6px;font-size:.85rem;font-variant-numeric:tabular-nums}
+.stat b{color:var(--gold)}
+.bar{height:10px;background:#0a0c10;border:1px solid #3a4050;border-radius:3px;overflow:hidden;min-width:90px;position:relative}
+.bar i{display:block;height:100%;transition:width .35s}
+.bar.hp i{background:linear-gradient(90deg,#3f9a3b,#6fd067)}
+.bar.hp.low i{background:linear-gradient(90deg,#a32a20,#e05a4a)}
+.bar.xp i{background:linear-gradient(90deg,#3567b0,#71a6f0)}
+.bar.tw{background:#2a1513}.bar.tw i{background:linear-gradient(90deg,#8d2a20,#d0503f)}
+.bar.boss{background:#1f1428}.bar.boss i{background:linear-gradient(90deg,#6a2a90,#b26be0)}
+.bar.big{height:16px}
+.dmg{animation:dmg .45s}
+@keyframes dmg{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px rgba(208,80,63,.8)}}
+.iconbtn{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:4px 9px;cursor:pointer;font:inherit;font-size:.85rem}
+/* portraits & sprites */
+.portrait{width:56px;height:56px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:2px solid #555;flex:none}
+.portrait.sm{width:34px;height:34px}
+.portrait svg{width:70%;height:70%}
+.heroCard{cursor:pointer;text-align:center;padding:18px 14px;border:2px solid var(--line);border-radius:12px;background:linear-gradient(180deg,#232836,#171a22);transition:border-color .15s,transform .15s}
+.heroCard:hover{transform:translateY(-2px);border-color:#5a6276}
+.heroCard.on{border-color:var(--gold);box-shadow:0 0 18px rgba(232,184,74,.35)}
+.heroCard .portrait{width:92px;height:92px;margin-bottom:8px}
+.heroCard .nm{font-weight:750;font-size:1.05rem}
+.heroCard .bonus{color:var(--gold);font-size:.85rem;font-weight:650}
+.creeps{display:flex;gap:6px;flex-wrap:wrap}
+.cdot{width:22px;height:22px;border-radius:5px;background:#3a2220;border:1px solid #6b3a33;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem}
+.cdot.cur{border-color:var(--gold);box-shadow:0 0 8px rgba(232,184,74,.6)}
+.cdot.ok{background:#1e3a20;border-color:#3f7a3b}.cdot.bad{background:#4a1d19;border-color:#a33}
+.sprite{width:64px;height:64px;flex:none}
+.sprite.dead{animation:die .7s forwards}
+.sprite.hit{animation:shake .4s}
+@keyframes die{0%{transform:scale(1)}30%{transform:scale(1.15) rotate(-6deg);filter:brightness(2)}100%{transform:scale(.6) translateY(14px);opacity:.25}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.float{position:fixed;pointer-events:none;font-weight:800;font-size:1.25rem;z-index:50;text-shadow:0 2px 6px #000;animation:floatUp 1.2s forwards}
+.float.g{color:var(--gold)}.float.x{color:#8fb8f5}.float.r{color:#ff7b6b}.float.d{color:#c9a0ff}
+@keyframes floatUp{0%{opacity:0;transform:translateY(0) scale(.8)}15%{opacity:1;transform:translateY(-8px) scale(1.1)}100%{opacity:0;transform:translateY(-70px) scale(1)}}
+.banner{font-size:1.5rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase;text-align:center;margin:6px 0;animation:pop .5s}
+.banner.lh{color:var(--gold)}.banner.dn{color:#c9a0ff}.banner.miss{color:var(--red)}.banner.ok{color:#8fe08a}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+/* learning text – groß und gut lesbar */
+.read{background:#f3f1ec;color:#1e2128;border-radius:10px;padding:16px 18px;font-size:1.08rem;line-height:1.62}
+.read .hint{color:#5d6370}
+.qbig{font-size:1.45rem;font-weight:700;line-height:1.35;margin:.2em 0 .6em}
+.muster{white-space:pre-wrap;font-size:1.08rem;line-height:1.65}
+.sec{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.read .sec{border-top-color:#d9d5cc}
+.sec:first-child{border-top:0;margin-top:0;padding-top:0}
+.read h3{color:#6b6f78}
+ol.steps{margin:.2em 0;padding-left:1.3em}
+.falle{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:start}
+.badge{display:inline-block;font-size:.72rem;padding:1px 8px;border-radius:99px;font-weight:750;white-space:nowrap}
+.badge.bad{background:#f7d9d5;color:#8c2a20}.badge.ok{background:#d8efd6;color:#25602a}.badge.warn{background:#f7e6c2;color:#7a4e00}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:1.05rem;border:1px solid #3c4354;background:#1b1f29;border-radius:9px;padding:13px 15px;margin:8px 0;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--acc)}
+.opt.right{border-color:var(--green);background:#1d3520}
+.opt.wrong{border-color:var(--red);background:#3d1c19}
+.opt.gone{opacity:.25;text-decoration:line-through}
+.opt[disabled]{cursor:default}
+.rate{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.rate button{font:inherit;font-size:1.05rem;font-weight:750;padding:14px;border-radius:10px;border:2px solid;cursor:pointer;background:#191c24}
+.rate .r-sitzt{border-color:var(--green);color:#8fe08a}.rate .r-wackelt{border-color:#d0a03a;color:#f1c56b}.rate .r-neu{border-color:var(--red);color:#f2938a}
+.cd{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums;flex:none}
+.cd span{background:var(--p1);width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.tbar{height:8px;background:#0a0c10;border-radius:4px;overflow:hidden;margin:4px 0 10px}
+.tbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#f3d48a);transition:width 1s linear}
+.tbar.low i{background:var(--red)}
+.items{display:flex;gap:8px;flex-wrap:wrap}
+.item{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.82rem;padding:6px 10px;border-radius:8px;border:1px solid #4a4230;background:#211d14;color:#f0d79a;cursor:pointer}
+.item[disabled]{opacity:.35;cursor:not-allowed}
+.item .n{background:#3a321f;border-radius:4px;padding:0 5px;font-weight:800}
+.flip{min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;font-size:1.3rem;font-weight:650}
+.flip.back{display:block;text-align:left;font-size:1.05rem;font-weight:400}
+.fbbox{border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:8px;padding:10px 14px;margin:10px 0;background:#1a1d26}
+.read .fbbox{background:#fff;border-color:#ddd8ce}
+.fbbox.ok{border-left-color:var(--green)}.fbbox.bad{border-left-color:var(--red)}
+.fbbox ul{margin:.3em 0;padding-left:1.2em}
+.spot{display:block;width:100%;text-align:left;font:inherit;font-size:1.05rem;background:#f3f1ec;color:#1e2128;border:2px solid transparent;border-radius:9px;padding:12px 14px;margin:8px 0;cursor:pointer}
+.spot:hover{border-color:var(--acc)}
+.spot.right{border-color:#8e5ad8;background:#efe4ff}.spot.wrong{border-color:var(--red);background:#fde3df}
+.spot[disabled]{cursor:default}
+/* map */
+.map{width:100%;max-width:520px;aspect-ratio:1;display:block;margin:0 auto}
+.map .lane{cursor:pointer}
+.map .lane:hover path{stroke:#e8b84a}
+.lanebtn{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#1a1e28;cursor:pointer;color:var(--ink);font:inherit;text-align:left;width:100%;margin-bottom:8px}
+.lanebtn:hover{border-color:var(--acc)}
+.lanebtn .t{font-weight:750}
+.lanebtn[disabled]{opacity:.45;cursor:not-allowed}
+.tw{display:inline-block;width:14px;height:18px;border-radius:2px;background:var(--red);margin-right:3px;vertical-align:middle}
+.tw.down{background:#444a58}
+.shopItem{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid #4a4230;border-radius:10px;background:#1d1a13;margin-bottom:10px}
+.shopItem .ic{width:44px;height:44px;flex:none}
+.gbar{display:grid;grid-template-columns:200px 1fr 64px;gap:10px;align-items:center;margin:5px 0;font-size:.88rem}
+@media (max-width:560px){.gbar{grid-template-columns:1fr 64px}.gbar .bar{grid-column:1/3;grid-row:2}}
+.pbar{height:9px;background:#0a0c10;border-radius:5px;overflow:hidden;display:flex}
+.pbar i{display:block;height:100%;background:var(--green)}.pbar i.w{background:#d0a03a}
+.ggStat{text-align:center;padding:12px;border:1px solid var(--line);border-radius:10px;background:#151820}
+.ggStat .v{font-size:1.6rem;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums}
+.ggStat .l{font-size:.75rem;color:var(--mute);text-transform:uppercase;letter-spacing:.08em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs a,.tabs button{font:inherit;font-size:.88rem;padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:#1a1e28;color:var(--ink);text-decoration:none;cursor:pointer}
+.tabs .on{background:var(--acc);border-color:var(--acc);color:#1b1407;font-weight:700}
+.qrow{display:flex;gap:10px;align-items:center;background:#1a1e28;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:7px;text-decoration:none;color:var(--ink)}
+.qrow:hover{border-color:var(--acc)}
+.qrow .qt{flex:1}
+details.wk{background:#f3f1ec;color:#1e2128;border-radius:10px;padding:13px 16px;margin-bottom:9px;font-size:1.04rem}
+details.wk summary{cursor:pointer;font-weight:700;font-size:1.05rem}
+.lbl{font-size:.74rem;font-weight:750;color:#6b6f78;text-transform:uppercase;letter-spacing:.05em;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#f3f1ec;color:#1e2128;font-weight:650;padding:10px 18px;border-radius:9px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:92vw;text-align:center}
+.toast.show{opacity:1}
+/* spick (druck) */
+.spick{font-size:.88rem;line-height:1.4;color:#1e2128}
+.spick .shead{display:flex;justify-content:space-between;border-bottom:2px solid #1e2128;padding-bottom:4px;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.spick .scols{display:grid;grid-template-columns:1.25fr 1fr;gap:10px 18px}
+@media (max-width:700px){.spick .scols{grid-template-columns:1fr}}
+.spick h5{font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;margin:8px 0 3px;color:#7a5a12}
+.spick ol,.spick ul{margin:0;padding-left:1.7em}
+.spick li{margin:2px 0}
+#printArea{display:none}
+@media print{
+ @page{size:A4;margin:10mm}
+ body{background:#fff}
+ body>*:not(#printArea){display:none!important}
+ #printArea{display:block!important}
+ #printArea .spick{font-size:8.3pt;line-height:1.25}
+ #printArea .spick .scols{grid-template-columns:1.25fr 1fr}
+ #printArea *{color:#000!important}
+ #printArea .gap{background:#f4f4f4!important;border:1px dashed #888!important}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hud" id="hud"></header>
+<main class="wrap" id="main"></main>
+<div id="toast" class="toast" role="status"></div>
+<input type="file" id="fileImport" accept="application/json,.json" hidden>
+<div id="printArea"></div>
+<script>
+'use strict';
+/* ===== Fragen-Daten (nur echte Fakten; Lücken in [ … ]) ===== */
+const GROUPS=[
+ ['motiv','Motivation & Rollenwechsel'],['fach','Lean-Fachfragen'],['praxis','Praxis & Ergebnisse'],['widerstand','Widerstand & Coaching'],
+ ['politik','Führung & Politik intern'],['tage90','90 Tage'],['schwach','Schwächen & Lernfeld'],['rueck','Rückfragen']];
+const GL=Object.fromEntries(GROUPS);
+const QS=[];
+function Q(id,g,q,pruef,ger,muster,bad,good,nach,kern,top){QS.push({id,g,q,pruef,ger,muster,bad,good,nach,kern,top:!!top});}
+
+Q('q01','motiv','Du kommst aus der Linie. Warum Consultant – und nicht Meister oder Teamleiter?',
+ 'Ob du aus Überzeugung wechselst oder nur weg willst – und ob du den Unterschied zwischen „eine Linie führen“ und „Veränderung anstoßen“ verstehst.',
+ ['Woher du kommst – ein Satz, echte Jahre.','Der Moment, der dich gepackt hat: Anlage A.','Warum das breiter ist als eine Linie – und ehrlich, was du noch lernen musst.'],
+ `Ich bin seit [Jahre gesamt ergänzen] Jahren hier in der Produktion, zwei Jahre davon als Vertretung des Vorarbeiters, eins als Rüstoptimierer. Als Vertretung habe ich gemerkt: Ich kann eine Schicht durch den Tag bringen. Aber was mich wirklich gepackt hat, war Anlage A. Da hat ein Formatwechsel rund 8 Stunden gedauert, danach meistens 3 bis 5. Nicht, weil ich schneller geschraubt habe, sondern weil wir den Ablauf geändert haben: Werkzeugwagen vorher da, Schlosser fest eingeplant, Pausen so gelegt, dass sie nicht in den Wechsel fallen. Als Meister wäre ich für eine Linie da. Als Lean Consultant kann ich so etwas an mehreren Linien anstoßen – und zwar so, dass die Leute vor Ort es selbst tragen. Das will ich machen. Und ehrlich: Methodisch muss ich dafür noch dazulernen. [deine Erfahrung ergänzen: Schulung oder Kurs, den du schon angefangen hast]`,
+ '„Ich will mich weiterentwickeln.“','„Ich will das, was an Anlage A funktioniert hat, an mehr Linien möglich machen.“',
+ 'Und wenn es mit der Stelle nicht klappt – gehst du dann zurück an die Linie?',
+ 'Anlage A hat mich gepackt: Ablauf ändern statt schneller schrauben – das will ich an mehr Linien möglich machen.',true);
+
+Q('q02','motiv','Was unterscheidet einen Lean Consultant von einem Rüstoptimierer?',
+ 'Ob du verstehst, dass die neue Rolle nicht „mehr vom Gleichen“ ist: weg vom Selbermachen, hin zu Befähigen, Methode und mehreren Bereichen.',
+ ['Rüstoptimierer: eine Anlage, ein Thema [ergänzen: selbst mit angepackt?].','Consultant: mehrere Bereiche, Methode, andere befähigen, Führung einbinden.','Was du mitnimmst – und was du ändern musst.'],
+ `Als Rüstoptimierer hatte ich ein Thema und eine Anlage: den Formatwechsel an Anlage A. Ich habe die Abweichungen vom Rüstdrehbuch aufgeschrieben und in der Rüstauswertung mit dem Team besprochen. [ergänzen: Hast du beim Rüsten selbst mit angepackt? Nur sagen, wenn ja.] Ein Lean Consultant hat mehrere Linien und mehr Themen – nicht nur Rüsten, auch Störungen, Qualität, Abläufe. Der größte Unterschied: Als Consultant mache ich es nicht selbst. Ich helfe dem Meister und der Schicht, das Problem selbst zu sehen und selbst zu lösen. Ich bringe die Methode mit – zum Beispiel trennen, was nur bei stehender Anlage geht und was vorher geht, oder Ursachen mit 5-Why suchen. Und ich sorge dafür, dass die Führung den Standard trägt. Mein Erfolg ist dann nicht, dass ich etwas verbessert habe, sondern dass die Linie ohne mich weiter verbessert. Das ist für mich der Kern der neuen Rolle.`,
+ '„Eigentlich dasselbe, nur größer.“','„Als Rüstoptimierer war ich für eine Anlage da – als Consultant sorge ich dafür, dass andere es machen und es hält.“',
+ 'Was fällt dir schwerer: selbst machen oder andere machen lassen?',
+ 'Rüstoptimierer: eine Anlage, ein Thema – Consultant: mehrere Linien, befähigt andere, Standard muss ohne ihn halten.',true);
+
+Q('q03','motiv','Warum sollten wir jemanden von innen nehmen – und nicht einen erfahrenen Berater von außen?',
+ 'Ob du deinen Heimvorteil kennst, ohne die Nachteile kleinzureden: Betriebsblindheit und die alte Rolle als Kollege.',
+ ['Vorteil: Du kennst Werk, Leute, Anlagen.','Risiko ehrlich benennen: blinde Flecken, man kennt dich als Kollegen.','Wie du das Risiko auffängst.'],
+ `Ich kenne das Werk von innen. Ich weiß, wie ein Formatwechsel an Anlage A wirklich abläuft, wo der Werkzeugwagen steht und warum die Schlosser manchmal woanders sind. Ein Externer braucht lange, bis er das sieht – und bis die Leute ihm überhaupt etwas erzählen. Mir erzählen sie es in der Pause. Das ist mein Vorteil. Das Risiko sehe ich auch: Ich bin vielleicht betriebsblind, und manche kennen mich nur als Kollegen aus der Schicht. Gegen die Betriebsblindheit hilft mir, dass ich an Anlage A selbst lange übersehen habe, wie viele Arbeiten im Stillstand liefen, die man vorher hätte machen können. Seitdem frage ich lieber einmal mehr, warum wir etwas so machen. Und bei der Kollegen-Rolle: Ich erkläre niemandem etwas von oben, ich fange mit dem Problem an, das ihn selbst nervt. Methode kann ich mir dazuholen – [deine Erfahrung ergänzen: Lean-Team, Schulung, Austausch mit anderen].`,
+ '„Ich kenne hier einfach alles.“','„Ich kenne das Werk – und weiß, dass ich deshalb auch blinde Flecken habe.“',
+ 'Wo bist du selbst betriebsblind?',
+ 'Ich kenne Werk und Leute von innen – und achte bewusst auf meine blinden Flecken.');
+
+Q('q04','fach','Was ist OEE – und wo verliert eine Anlage bei euch am meisten?',
+ 'Ob du die Kennzahl wirklich verstehst (drei Faktoren) und sie auf eure Anlagen beziehen kannst – ohne Zahlen zu erfinden.',
+ ['Definition: Verfügbarkeit × Leistung × Qualität, je ein Satz.','Rüsten frisst Verfügbarkeit – wenn es nicht als geplanter Stillstand rausgerechnet wird.','Ein eigenes Beispiel (Qualitätsthema) – und ehrlich sagen, was gemessen wurde.'],
+ `OEE heißt Gesamtanlageneffektivität. Das sind drei Faktoren, die man multipliziert. Verfügbarkeit: Läuft die Anlage in der geplanten Zeit überhaupt? Leistung: Läuft sie mit der vorgesehenen Geschwindigkeit, oder verliert sie durch kleine Stopps und langsames Fahren? Und Qualität: Wie viel davon ist Gutware? Beim Rüsten muss man genau sein. Rüsten frisst Verfügbarkeit, wenn es nicht als geplanter Stillstand rausgerechnet wird. [ergänzen: Wie wird bei dir Rüsten in der OEE gerechnet?] Wo eine Anlage am meisten verliert, sage ich lieber an einem Beispiel als pauschal: [ergänzen: ein Qualitätsthema – was war los, wie habt ihr es gemerkt, was wurde geändert?] Das zeigt mir: Nicht jeder Verlust ist Stillstand. Manchmal läuft die Anlage und macht trotzdem nicht, was wir brauchen. Eine formale OEE-Messung hatte ich beim Rüsten nicht, das sage ich ehrlich. An einer neuen Linie würde ich erst schauen, welche Zahlen es gibt, und dann mit dem Meister klären, welcher der drei Faktoren am meisten weh tut.`,
+ '„Unsere OEE liegt bei ungefähr X Prozent.“ – wenn du die Zahl nicht sicher kennst.','„Rüsten frisst Verfügbarkeit – wenn es nicht als geplanter Stillstand rausgerechnet wird. Das hängt davon ab, wie gerechnet wird.“',
+ 'Wie würdest du OEE an einer Linie einführen, an der es kaum Daten gibt?',
+ 'OEE = Verfügbarkeit × Leistung × Qualität. Rüsten frisst Verfügbarkeit, wenn es nicht als geplanter Stillstand rausgerechnet wird. [ergänzen: Wie wird bei dir Rüsten in der OEE gerechnet?]',true);
+
+Q('q05','fach','Erklär einem Bediener in zwei Sätzen, was internes und externes Rüsten ist – ohne Fachwort. (SMED)',
+ 'Ob du Methode einfach erklären kannst – das ist später dein Alltag an der Linie.',
+ ['Zwei Sorten Arbeit: nur bei stehender Anlage – oder auch bei laufender.','Alles, was geht, vor den Stopp ziehen.','Beispiel Werkzeugwagen – dann erst das Fachwort.'],
+ `Ich würde es so sagen: Beim Formatwechsel gibt es zwei Sorten Arbeit. Die eine geht nur, wenn die Anlage steht – Formatteile tauschen zum Beispiel. Die andere kann man machen, während die Anlage noch läuft oder schon wieder läuft – Werkzeug holen, Teile bereitlegen, aufräumen. Die zweite Sorte soll nicht mehr im Stillstand passieren. An Anlage A kam der Werkzeugwagen oft erst, wenn die Maschine schon stand. Also stand die Maschine, während jemand Werkzeug geholt hat. Wir haben den Wagen vor den Auslauf gezogen – jetzt ist alles da, wenn die Maschine stoppt. Das ist eigentlich schon die ganze Idee. Im Fachwort heißt das SMED: internes und externes Rüsten trennen und so viel wie möglich nach extern verlagern. Am Band sage ich lieber: Was du vorher machen kannst, mach vorher. Und danach schauen wir gemeinsam, wie der Rest im Stillstand schneller geht.`,
+ '„SMED heißt Single Minute Exchange of Die, nach Shigeo Shingo …“ – am Band verliert dich das sofort.','„Was du vorher machen kannst, mach vorher – dann steht die Anlage kürzer.“',
+ 'Und was machst du mit dem Teil, der nur im Stillstand geht? (Straffen: parallel arbeiten, feste Reihenfolge, schnellere Verbindungen.)',
+ 'Zwei Sorten Arbeit: nur im Stillstand – oder auch bei laufender Anlage. Alles, was geht, vorher.',true);
+
+Q('q06','fach','Welche Verschwendungsarten kennst du – und welche hast du beim Rüsten gesehen?',
+ 'Ob du die 7+1 Arten kennst und sie in echter Arbeit wiedererkennst – nicht nur als Liste.',
+ ['Die Liste kurz: sieben plus eine.','Zwei, drei davon an Anlage A zeigen – sauber benannt.','Satz dazu: Sehen ist wichtiger als auswendig können.'],
+ `Die klassischen sieben sind Transport, Bestand, Bewegung, Warten, Überproduktion, Überbearbeitung und Fehler. Dazu kommt oft als achte das ungenutzte Potenzial der Mitarbeiter. Beim Rüsten an Anlage A habe ich vor allem Warten gesehen: Die Maschine stand, und alle haben auf die Schlosser oder den Werkzeugwagen gewartet. Dann Bewegung: Werkzeug holen und unnötiges Hantieren, während die Anlage steht. Tätigkeiten ohne Bezug zum Produkt im Stillstand sind nicht wertschöpfend: Die Maschine wartet, die Leute laufen und hantieren. Überbearbeitung wäre etwas anderes, nämlich mehr Aufwand, als der Kunde verlangt. Und dass viele externe Arbeiten im Stillstand liefen, ist eigentlich ein SMED-Thema: Die Arbeit ist nötig, sie liegt nur zur falschen Zeit. Ungenutztes Potenzial gab es auch: Die Kollegen wussten oft selbst, wo es hakt. Das kam in der Rüstauswertung raus, als wir die Abweichungen gemeinsam angeschaut haben. Die Liste auswendig ist nicht der Punkt. Der Punkt ist, sie an der Anlage zu sehen.`,
+ 'Die Liste runterbeten – ohne ein einziges Beispiel.','„Warten habe ich an Anlage A bei jedem Wechsel gesehen: Die Maschine stand, alle warteten auf die Schlosser.“',
+ 'Welche Verschwendung ist am schwersten zu sehen – und warum?',
+ '7+1 Muda. Anlage A: Warten (Schlosser, Wagen – und die Maschine wartet bei Tätigkeiten ohne Produktbezug), Bewegung (Hantieren); externe Arbeit im Stillstand = SMED-Thema.');
+
+Q('q07','fach','Wie gehst du ein Problem strukturiert an – PDCA, A3, was nutzt du?',
+ 'Ob du strukturiert vorgehst oder sofort Lösungen umsetzt – und ob du den Kreis schließt (prüfen und festschreiben).',
+ ['PDCA in einem Satz.','Ein eigenes Beispiel entlang der vier Schritte – nicht nur Rüsten.','A3 = dasselbe auf einem Blatt – ehrlich sagen, ob du schon eins gemacht hast.'],
+ `Ich gehe im Kern nach PDCA vor: planen, machen, prüfen, festigen. Ein Beispiel, das nicht vom Rüsten kommt: [ergänzen: eine Übergabe – z. B. ein Problem bei der Schichtübergabe, das immer wieder auftrat]. Davor steht die Ist-Aufnahme: aufschreiben, was genau passiert und wie oft. Plan heißt dann: Ursachen finden und Maßnahmen festlegen, bevor ich etwas ändere. Do: eine Maßnahme im Kleinen ausprobieren, zum Beispiel erst in einer Schicht. Check: nach ein paar Wochen nachschauen, ob es wirklich besser ist – nicht nur, ob die Maßnahme umgesetzt wurde. Act: Wenn es wirkt, gehört es in den Standard. Wenn nicht, fange ich mit dem Plan neu an. Beim Rüsten an Anlage A lief es genauso: Abweichungen vom Rüstdrehbuch aufschreiben, in der Rüstauswertung mit dem Team Maßnahmen ableiten und in den nächsten Auswertungen prüfen. Ein A3 ist für mich dasselbe auf einem Blatt: Problem, Ist-Zustand, Ursache, Maßnahmen, Nachverfolgung. Ein formales A3 habe ich [ergänzen: schon geschrieben? Wenn nein, ehrlich sagen].`,
+ '„Ich habe sofort die Lösung gesehen und umgesetzt.“','„Erst aufgeschrieben, dann im Kleinen ausprobiert – und danach geprüft, ob es wirklich wirkt.“',
+ 'Was machst du, wenn der Check zeigt, dass es nicht wirkt?',
+ 'Ist aufnehmen → Plan: Ursachen + Maßnahmen → Do: klein ausprobieren → Check: wirkt es? → Act: Standard oder neu planen.');
+
+Q('q08','fach','Nenne ein Problem, das du mit 5-Why gelöst hast.',
+ 'Ob du bis zur Ursache gehst oder beim ersten Symptom stoppst – und ob du ehrlich bist, wenn du die Methode nicht formal genutzt hast.',
+ ['Ehrlich: formal oder nur so vorgegangen?','Die Warum-Kette an Anlage A.','Daraus die Maßnahme – und dein Merksatz.'],
+ `Formal mit einem 5-Why-Blatt habe ich das nicht gemacht, das sage ich ehrlich. Aber so bin ich an Anlage A vorgegangen. Warum dauert der Formatwechsel so lange? Weil die Maschine lange steht, ohne dass gerüstet wird. Warum steht sie? Weil wir auf Werkzeug warten. Warum warten wir? Weil der Werkzeugwagen erst kommt, wenn die Maschine schon steht. Warum kommt er so spät? [deine Erfahrung ergänzen: keiner zuständig, kein fester Platz, nicht im Rüstdrehbuch?] Die Maßnahme: Der Wagen wird vor den Auslauf gezogen, bevor die Maschine stoppt. Das Gleiche bei den Schlossern: Warum kamen sie spät? Weil sie bei anderen Aufträgen waren. Warum? Weil Rüsten für sie keine Priorität hatte. Also haben wir sie fest eingeplant. Mein Merksatz: nicht bei der ersten Antwort stehen bleiben. „Die Schlosser sind halt langsam“ ist keine Ursache.`,
+ 'Bei einem Schuldigen aufhören: „Der Kollege hat nicht aufgepasst.“','„Wenn die Antwort ein Name ist, habe ich zu früh aufgehört zu fragen.“',
+ 'Wann reicht 5-Why nicht mehr? (Wenn es mehrere Ursachen gibt – dann erst sammeln, z.B. mit Ishikawa.)',
+ 'Lange Rüstzeit → Warten auf Werkzeug → Wagen kommt zu spät → Wagen vor den Auslauf.');
+
+Q('q09','fach','Was ist Standardarbeit – und wie stellst du sicher, dass ein Standard hält?',
+ 'Ob du weißt, dass ein Standard gelebt, geprüft und von der Führung getragen werden muss – nicht nur geschrieben.',
+ ['Definition in einem Satz: beste bekannte Art, heute.','Beispiel Rüstdrehbuch an Anlage A.','Drei Dinge, damit es hält – inklusive deiner Lehre.'],
+ `Standardarbeit ist für mich die beste Art, wie wir etwas heute machen – aufgeschrieben, damit jede Schicht es gleich macht. Und sie ist die Basis für Verbesserung: Ohne Standard weiß ich gar nicht, was eine Abweichung ist. An Anlage A war das Rüstdrehbuch unser Standard. Ich habe aufgeschrieben, wo wir davon abweichen, und das in der Rüstauswertung besprochen. Damit ein Standard hält, braucht es für mich drei Dinge. Erstens: Die Schicht muss ihn mitgebaut haben, sonst ist es meiner und nicht ihrer. Zweitens: Jemand schaut regelmäßig drauf – bei uns war das die Rüstauswertung. Drittens, und da habe ich gelernt: Die Führung muss ihn tragen. Ich habe die Vorgesetzten zu spät eingebunden, da hing der Standard zu sehr an mir. Heute würde ich den Meister von Anfang an mitnehmen, damit er den Standard einfordert, auch wenn ich nicht da bin.`,
+ '„Wir haben eine Arbeitsanweisung geschrieben und ausgehängt.“','„Ein Standard hält, wenn die Schicht ihn mitgebaut hat und der Meister ihn einfordert.“',
+ 'Woran merkst du, dass ein Standard nicht mehr gelebt wird?',
+ 'Standard hält, wenn die Schicht ihn mitbaut, jemand regelmäßig prüft und die Führung ihn trägt.',true);
+
+Q('q10','fach','Shopfloor-Management: Was ist für dich gut – und was ist nur ein Board?',
+ 'Ob du Shopfloor-Management als Führung vor Ort verstehst – nicht als Board mit bunten Zetteln.',
+ ['Was es ist: kurze Runde, wenige Kennzahlen, Maßnahmen mit Name und Termin.','Was schlecht läuft: Board ohne Folgen.','Dein kleines Beispiel: Rüstauswertung – und was gefehlt hat.'],
+ `Gutes Shopfloor-Management heißt für mich: Führung findet da statt, wo gearbeitet wird. Eine kurze, feste Runde am Board, wenige Kennzahlen, die die Schicht selbst versteht, und bei jeder Abweichung eine Maßnahme mit Namen und Termin. Wenn die Schicht es nicht lösen kann, geht es eine Ebene höher. Das Board ist nur das Werkzeug. Schlecht wird es, wenn das Board gepflegt wird, aber keiner mehr hinschaut, was daraus folgt. Unsere Rüstauswertung an Anlage A war im Kleinen so etwas: Wir haben die Abweichungen angeschaut und Maßnahmen abgeleitet. Eine gute Runde erkenne ich daran, dass am Ende jeder weiß, wer bis wann was macht. Als Lean Consultant würde ich lieber mit einem Board anfangen, das wirklich genutzt wird, als mit fünf, die keiner pflegt. [deine Erfahrung ergänzen: Welche Boards kennst du, und was passiert dort?]`,
+ '„Wir brauchen an jeder Linie ein KPI-Board.“','„Lieber ein Board, das genutzt wird, als fünf, die keiner pflegt.“',
+ 'Welche drei Kennzahlen würdest du an eine Linie hängen – und warum?',
+ 'Führung vor Ort: kurze Runde, wenige Kennzahlen, Maßnahme mit Name und Termin. Das Board ist nur Werkzeug.');
+
+Q('q11','fach','Was bedeutet 5S für dich – ohne Aufräum-Klischee?',
+ 'Ob du 5S als Voraussetzung für stabile Abläufe siehst – oder als Aufräumaktion vor einem Besuch.',
+ ['Die fünf S kurz.','Wozu: nicht suchen, Abweichungen sofort sehen.','Beispiel beim Rüsten – und: immer an ein echtes Problem hängen.'],
+ `5S sind Sortieren, Setzen – also feste Plätze –, Säubern, Standardisieren und Selbstdisziplin, also dranbleiben. Für mich ist 5S kein Aufräumen für den nächsten Besuch. Es geht darum, dass man nicht suchen muss und Abweichungen sofort sieht. Beim Rüsten merkt man das direkt: Wenn Werkzeug nicht da ist oder erst gesucht werden muss, steht die Anlage. An Anlage A war der Werkzeugwagen dafür ein gutes Beispiel – nicht, weil wir offiziell 5S eingeführt hätten, sondern weil der Wagen einen festen Platz vor dem Auslauf bekommen hat und da ist, bevor die Maschine stoppt. [deine Erfahrung ergänzen: Gibt es auf dem Wagen feste Plätze pro Werkzeug? Wenn ja, sagen.] Ich würde 5S immer an ein echtes Problem hängen, zum Beispiel Suchzeiten beim Wechsel. Dann versteht jeder, warum es sich lohnt, und es schläft nicht nach vier Wochen wieder ein.`,
+ '„Wir haben 5S eingeführt.“ – ohne Ergebnis.','„Der Werkzeugwagen steht vor dem Auslauf, bevor die Maschine stoppt – dann steht die Anlage nicht, weil jemand sucht.“',
+ 'Wie hältst du 5S am Leben, wenn der erste Schwung vorbei ist?',
+ '5S heißt: nicht suchen, Abweichungen sofort sehen – immer an ein echtes Problem hängen.');
+
+Q('q12','praxis','Erzähl ein Rüstprojekt so, dass jemand ohne Produktionshintergrund die Wirkung versteht.',
+ 'Ob du Wirkung ohne Fachsprache erklären kannst – für Werkleitung, Personal, Controlling.',
+ ['Bild für Laien: Maschine wird auf ein anderes Produkt umgebaut.','Was schieflief und was ihr geändert habt – drei Maßnahmen.','Ergebnis ehrlich (Range, Quelle) + was es fürs Werk heißt + Lehre.'],
+ `Stell dir vor, eine Maschine muss auf ein anderes Produkt umgebaut werden. An Anlage A hat so ein Formatwechsel rund 8 Stunden gedauert. Viel davon lief im Stillstand, obwohl man es vorher hätte machen können. Der Werkzeugwagen kam oft erst, wenn die Maschine schon stand, und die Schlosser hatten Rüsten nicht als Priorität. Ich habe die Abweichungen vom Rüstdrehbuch aufgeschrieben und in der Rüstauswertung mit dem Team besprochen. Dann haben wir den Wagen vor den Auslauf gezogen, die Schlosser fest eingeplant und die Pausen so gelegt, dass sie nicht mehr mitten in den Wechsel fallen. Danach waren wir meistens bei 3 bis 5 Stunden – ohne Stoppuhr-Studie, aber in den Rüstauswertungen sichtbar. Fürs Werk heißt das: Bei jedem Wechsel steht die Anlage mehrere Stunden weniger still. Und die Maßnahmen kamen aus der Runde, nicht nur von mir.`,
+ '„Wir haben die Rüstzeit um 50 Prozent reduziert.“ – klingt genau, ist aber nicht gemessen.','„Von rund 8 auf meistens 3 bis 5 Stunden – sichtbar in den Rüstauswertungen.“',
+ 'Wie viele Wechsel waren das, über welchen Zeitraum – und was war der schlechteste? [Antwort vorher klären – nichts erfinden]',
+ 'Anlage A: rund 8 → meistens 3–5 h. Wagen vorher da, Schlosser eingeplant, Pausen nicht im Wechsel.',true);
+
+Q('q13','praxis','Wie misst du Erfolg, wenn es keine sauberen Daten gibt?',
+ 'Ob du ehrlich mit Unsicherheit umgehst und trotzdem Wirkung belegen kannst.',
+ ['Ehrlich: Was gab es an Daten, was nicht.','Range + Quelle statt Scheingenauigkeit.','Was du nächstes Mal von Anfang an misst – und was man bis dahin beobachten kann.'],
+ `Genau so war es an Anlage A. Eine Stoppuhr-Studie gab es nicht, formales OEE-Tracking auch nicht. Was es gab, waren die Rüstauswertungen und das Schichtbuch. Daraus konnte ich sagen: vorher rund 8 Stunden, danach meistens 3 bis 5, je nach Format und Schicht. Wie viele Wechsel das genau waren, kann ich nicht sauber sagen – [deine Erfahrung ergänzen: grobe Anzahl und Zeitraum, nur wenn du es weißt]. Ich sage deshalb lieber eine Range und die Quelle als eine glatte Zahl, die beim ersten Nachfragen kippt. Als Consultant würde ich beim nächsten Mal von Anfang an eine einfache Messung einbauen: bei jedem Wechsel Start und Ende aufschreiben, vom letzten Gutteil bis zum ersten Gutteil. Das kostet fast nichts und macht das Ergebnis belastbar. Und bis die Zahlen da sind, zählt, was man beobachten kann: Steht der Wagen vor dem Stopp da? Sind die Schlosser zur geplanten Zeit an der Maschine?`,
+ '„Wir haben ungefähr 40 Prozent gespart.“ – ohne Quelle.','„Rund 8 auf meistens 3 bis 5 Stunden. Quelle: Rüstauswertungen, keine Stoppuhr-Studie.“',
+ 'Warum hast du damals nicht gemessen?',
+ 'Range + Quelle + was nicht gemessen wurde. Nächstes Mal: einfache Messung von Anfang an.');
+Q('q14','praxis','Hält der Standard an Anlage A heute noch – auch ohne dich?',
+ 'Der Härtetest: Nachhaltigkeit. Ob du ehrlich bist und weißt, woran ein Standard hängt.',
+ ['Ehrlicher Ist-Stand (nur was du weißt).','Was trägt – was wackelt.','Lehre: Führung früher einbinden.'],
+ `Ehrlich: [deine Erfahrung ergänzen: Wie sieht es heute an Anlage A aus? Wer macht die Rüstauswertung jetzt?] Was ich sagen kann: Die Maßnahmen, die im Ablauf fest drin sind, halten am ehesten. Wenn die Schlosser fest eingeplant sind und der Wagen vor dem Auslauf steht, ist das Teil der Planung und nicht mehr meine Erinnerung. Wo es wackeln kann, ist alles, was davon lebt, dass jemand drauf schaut – zum Beispiel, dass Abweichungen vom Rüstdrehbuch weiter aufgeschrieben und besprochen werden. Das hing stark an mir. Genau daraus kommt meine wichtigste Lehre: Ich hätte die Vorgesetzten früher einbinden müssen, damit sie den Standard einfordern, auch wenn ich nicht da bin. Als Lean Consultant würde ich von Anfang an klären, wer den Standard nach mir trägt. Und ich würde nach ein paar Wochen wiederkommen und nachschauen, statt nur mit dem Start zufrieden zu sein.`,
+ '„Ja, läuft alles super.“ – wenn du es nicht geprüft hast.','„Was im Ablauf fest drin ist, hält. Was an mir hing, wackelt – das würde ich heute anders machen.“',
+ 'Warst du seitdem noch mal an der Maschine und hast nachgeschaut?',
+ 'Was im Ablauf verankert ist, hält; was an mir hing, wackelt. Deshalb: Führung früher einbinden.');
+
+Q('q15','praxis','Welche Verschwendung hast du lange übersehen?',
+ 'Selbstreflexion: ob du zugeben kannst, dass auch du betriebsblind warst – und was du daraus gelernt hast.',
+ ['Konkretes Beispiel.','Warum du es nicht gesehen hast.','Was du seitdem anders machst.'],
+ `Die Arbeiten im Stillstand. An Anlage A liefen viele Tätigkeiten, während die Maschine stand, die man vorher oder nachher hätte machen können – Werkzeug holen, Teile bereitlegen. Und es gab Tätigkeiten, die mit dem Produkt gar nichts zu tun hatten und trotzdem im Wechsel passiert sind. Das war für mich lange normal, weil es immer so gemacht wurde. Ich habe das erst gesehen, als ich die Abweichungen vom Rüstdrehbuch aufgeschrieben habe. Auf dem Papier sieht man plötzlich, wie viel Zeit weg ist, bevor überhaupt ein Formatteil getauscht wird. Seitdem frage ich bei jedem Schritt: Muss die Maschine dafür stehen? Wenn nein, gehört es nicht in den Stillstand. Und ich bin vorsichtiger, wenn ich denke, ich kenne einen Ablauf schon. Gerade als Interner muss ich genau hinschauen, weil ich vieles für selbstverständlich halte.`,
+ '„Eigentlich habe ich alles gesehen.“','„Die Arbeiten im Stillstand waren für mich lange normal – bis ich sie aufgeschrieben habe.“',
+ 'Wie verhinderst du, dass dir das an einer neuen Linie wieder passiert?',
+ 'Arbeiten im Stillstand, die vorher gehen – lange normal, erst beim Aufschreiben sichtbar.');
+
+Q('q16','widerstand','Wie gehst du mit Widerstand bei Kollegen um?',
+ 'Ob du Widerstand ernst nimmst und Leute gewinnst – statt Druck zu machen oder über ihn hinwegzugehen.',
+ ['Widerstand hat meistens einen Grund – zuhören.','Beispiel Anlage A: Skepsis und dein Satz.','Beteiligen statt überzeugen – und Führung dazu.'],
+ `Widerstand hat meistens einen Grund. An Anlage A kam oft: „Das bringt eh nichts.“ Die Kollegen hatten schon einige Aktionen gesehen, die wieder eingeschlafen sind. Also habe ich nicht mit Methode angefangen, sondern mit dem, was sie selbst nervt: das Warten auf Werkzeug und auf die Schlosser. Ich habe es klein gemacht: Nicht das große Projekt zählt, sondern jeder Fehler, den wir beim nächsten Wechsel finden. Dann haben wir die Abweichungen gemeinsam in der Rüstauswertung besprochen. Die Maßnahmen kamen dann aus der Runde und nicht nur von mir. Wenn der Kollege seinen eigenen Vorschlag umgesetzt sieht, ist der Widerstand meistens kleiner. Und ich hole den Meister dazu: Wenn er sichtbar dahintersteht, müssen die Kollegen nicht zwischen mir und ihm wählen. [deine Erfahrung ergänzen: ein Kollege, der am Ende mitgezogen hat – ohne Namen]`,
+ '„Die muss man halt mitnehmen.“ – Floskel ohne Inhalt.','„Ich fange bei dem an, was die Kollegen selbst nervt – und die Maßnahmen kommen aus ihrer Runde.“',
+ 'Und wenn jemand trotzdem blockiert?',
+ 'Widerstand hat Gründe. Mit dem anfangen, was die Kollegen nervt; Maßnahmen aus der Runde; Meister dazu.',true);
+
+Q('q17','widerstand','Ein erfahrener Kollege sagt: „Das bringt eh nichts.“ Was antwortest du?',
+ 'Ob du ruhig bleibst, ein gutes Argument hast und den Kollegen einbindest statt ihn zu überreden.',
+ ['Nicht diskutieren – Verständnis zeigen.','Dein Satz.','Ihn einbinden: Was würdest du ändern?'],
+ `Ich würde erst mal nicht dagegen argumentieren. Wenn jemand das sagt, hat er meistens schon Aktionen gesehen, die wieder eingeschlafen sind. Das nehme ich ernst. Dann sage ich, was ich an Anlage A auch gesagt habe: „Jeder Defekt oder jede Verbesserung, die wir beim Rüsten finden, bringt uns einen Schritt näher an eine störungsfreie Maschine.“ Es geht also nicht um ein großes Projekt, sondern um den nächsten gefundenen Fehler. Und dann frage ich ihn: „Was nervt dich beim Wechsel am meisten?“ Erfahrene Kollegen wissen oft am besten, wo es hakt. An Anlage A waren das zum Beispiel die Wartezeiten auf Werkzeug und auf die Schlosser. Wenn sein Punkt in der Rüstauswertung auftaucht und dann wirklich umgesetzt wird, hat er selbst den Beweis, dass es etwas bringt. Überzeugen muss ich ihn dann nicht mehr.`,
+ '„Doch, Lean bringt nachweislich viel.“ – Belehrung.','„Was nervt dich beim Wechsel am meisten? Da fangen wir an.“',
+ 'Und wenn er auch nach der ersten Maßnahme sagt, es bringt nichts?',
+ 'Ernst nehmen, nicht dagegen argumentieren – meinen Satz für Skeptiker sagen, dann fragen: „Was nervt dich beim Wechsel am meisten?“');
+
+Q('q18','widerstand','Wie coachst du, ohne anzuordnen?',
+ 'Ob du den Rollenwechsel verstehst: Als Consultant hast du keine Weisungsbefugnis – du wirkst über Fragen und Beteiligung.',
+ ['Fragen statt Antworten.','Leute ihr Ergebnis selbst vorstellen lassen.','Beispiel Rüstauswertung – und ehrlich, was du noch lernst.'],
+ `Als Consultant kann ich nichts anordnen, und das finde ich eigentlich richtig. Ich arbeite mit Fragen: Was ist beim letzten Wechsel passiert? Wo habt ihr gewartet? Was müsste da sein, bevor die Maschine stoppt? So kommt die Lösung aus der Schicht, und dann trägt die Schicht sie auch. An Anlage A war die Rüstauswertung so ein Ort: Wir haben die Abweichungen vom Rüstdrehbuch angeschaut, und die Maßnahmen kamen aus der Runde. Wichtig ist mir auch, dass die Kollegen ihr Ergebnis selbst vorstellen, zum Beispiel dem Meister, und nicht ich. Ehrlich gesagt: Als Vertretung des Vorarbeiters war ich es gewohnt, auch mal zu sagen, wie es gemacht wird. Das Umschalten aufs Fragen muss ich bewusst üben. [deine Erfahrung ergänzen: eine Situation, in der du die Antwort bewusst nicht vorgegeben hast]`,
+ '„Ich erkläre den Leuten, wie es richtig geht.“','„Ich frage, bis die Schicht die Lösung selbst hat – und dann stellt sie sie auch selbst vor.“',
+ 'Was machst du, wenn die Schicht auf eine schlechte Lösung kommt?',
+ 'Fragen statt Antworten; die Schicht stellt ihr Ergebnis selbst vor.');
+
+Q('q19','widerstand','Was machst du, wenn ein Meister nicht mitzieht?',
+ 'Ob du mit Hierarchie umgehen kannst: nicht über ihn hinweg, nicht sofort eskalieren, sondern sein Problem verstehen.',
+ ['Erst verstehen: Was ist sein Problem, seine Kennzahl?','Ihm etwas bringen, das ihm hilft – er ist der Besitzer.','Erst dann, offen und mit ihm, eine Ebene höher.'],
+ `Zuerst würde ich zu ihm gehen und verstehen, warum. Ein Meister hat seine eigenen Ziele: Menge, Qualität, Personal. Wenn ich mit einem Lean-Thema komme, ist das für ihn erst mal Zusatzarbeit. Das kenne ich von der anderen Seite: [ergänzen: ein Tag als Vertretung des Vorarbeiters, an dem jemand mit einem neuen Thema kam, während du die Schicht am Laufen halten musstest]. Also frage ich: Was drückt dich gerade am meisten? Wenn ich dabei helfen kann, ist es sein Thema und nicht meins. Und er bekommt das Ergebnis, nicht ich. Wichtig: Ich gehe nicht an ihm vorbei zu seiner Schicht. Dann müssten die Kollegen zwischen ihm und mir wählen, und das verliere ich immer. Wenn er trotzdem blockiert, sage ich ihm offen, dass ich das mit dem gemeinsamen Vorgesetzten kläre. Nicht hinter seinem Rücken, sondern mit ihm zusammen, als Frage: Was braucht der Bereich, damit es klappt?`,
+ '„Dann eskaliere ich das an die Werkleitung.“ – als erster Schritt.','„Ich frage ihn, was ihn am meisten drückt – und mache es zu seinem Thema.“',
+ 'Und wenn der Vorgesetzte dem Meister recht gibt?',
+ 'Erst sein Problem verstehen, es zu seinem Thema machen; nie an ihm vorbei; Eskalation nur offen.',true);
+
+Q('q20','politik','Produktion und Instandhaltung ziehen nicht an einem Strang. Wie gehst du vor?',
+ 'Ob du Schnittstellenkonflikte sachlich lösen kannst – ohne Schuldzuweisung.',
+ ['Beide Seiten verstehen – Schlosser haben andere Aufträge.','Beispiel: Rüsten fest einplanen.','Gemeinsame Planung statt Vorwurf.'],
+ `Das hatte ich genau so an Anlage A. Die Schlosser haben Rüsten nicht priorisiert, weil sie gleichzeitig andere Aufträge hatten. Für die Produktion sah das aus wie „die kommen nicht“. Für die Instandhaltung war es: „Wir haben noch drei andere Baustellen.“ Beide hatten recht. Die Lösung war nicht, Druck zu machen, sondern die Schlosser für den Wechsel fest einzuplanen. Dann wussten sie vorher, wann sie gebraucht werden, und konnten ihre anderen Aufträge drum herum legen. Das ist für mich der Kern bei Schnittstellen: Das Problem liegt meistens nicht bei einer Person, sondern in der Planung zwischen zwei Bereichen. Als Consultant würde ich beide an einen Tisch holen, mit einem konkreten Fall, und fragen: Was braucht ihr voneinander, damit es klappt? [deine Erfahrung ergänzen: Wer hat die feste Einplanung damals entschieden – Meister, Instandhaltungsleitung?]`,
+ '„Die Instandhaltung hat halt keine Lust.“','„Das Problem lag in der Planung zwischen zwei Bereichen – nicht bei den Schlossern.“',
+ 'Was machst du, wenn die Instandhaltungsleitung sagt, dafür hat sie keine Leute?',
+ 'Schnittstelle Schlosser: beide hatten recht – Lösung war feste Einplanung, nicht Druck.');
+
+Q('q21','politik','Eine Führungskraft sagt Ja zum Standard – lebt ihn aber nicht. Was tust du?',
+ 'Ob du verstehst, dass ein Standard ohne sichtbare Führung stirbt – und wie du Führung gewinnst, ohne sie vorzuführen.',
+ ['Offen, unter vier Augen ansprechen.','Konkrete, kleine Rolle anbieten.','Deine Lehre aus Anlage A.'],
+ `Das ist für mich der wichtigste Punkt überhaupt, weil ich es an Anlage A selbst gelernt habe. Ich habe die Vorgesetzten zu spät eingebunden. Die Maßnahmen haben funktioniert, aber der Standard hing zu sehr an mir. Wenn eine Führungskraft Ja sagt und es nicht lebt, spreche ich sie unter vier Augen an – nicht vor der Schicht. Ich sage, was ich beobachte, und frage, was sie braucht. Oft fehlt keine Überzeugung, sondern Zeit oder eine klare Rolle. Dann schlage ich etwas Kleines und Konkretes vor, zum Beispiel: einmal pro Woche bei der Rüstauswertung dabei sein und nach einer offenen Maßnahme fragen. Das kostet wenig, und die Schicht sieht: Der Chef schaut hin. Wenn sich trotzdem nichts ändert, spreche ich das offen im nächsten Termin mit ihr und ihrem Vorgesetzten an – als Frage, wie wir den Standard absichern, nicht als Vorwurf.`,
+ '„Dann muss man halt mehr kontrollieren.“','„Ich biete ihr eine kleine, sichtbare Rolle an – zum Beispiel einmal pro Woche bei der Auswertung dabei sein.“',
+ 'Wie sprichst du das an, wenn die Führungskraft über dir steht?',
+ 'Unter vier Augen ansprechen, kleine sichtbare Rolle anbieten – Standard braucht Führung.');
+
+Q('q22','tage90','Was machst du in deinen ersten 90 Tagen?',
+ 'Ob du einen realistischen Plan hast: erst sehen und verstehen, dann ein sichtbarer Pilot mit dem Bereich, dann Standard – statt alles auf einmal.',
+ ['Woche 1–2: Gemba – an die Linien, vor allem an die, die du nicht kennst.','Ab Woche 3: Pilot mit einem Meister an einem Thema, das ihn drückt.','Bis Tag 90: Standard, Meister als Besitzer, Messung – dann das nächste Thema.'],
+ `In den ersten zwei Wochen bin ich vor allem am Gemba, also da, wo gearbeitet wird. Und zwar gerade an den Linien, die ich noch nicht kenne. Meine eigene Linie kenne ich, da bin ich eher betriebsblind. Ich laufe Schichten mit, schaue mir Wechsel und Störungen live an und frage Meister und Bediener: Wo verliert ihr am meisten? Dazu schaue ich, welche Zahlen es wirklich gibt und welche Themen das Lean-Team schon hat. [ergänzen: Mit wem würdest du zuerst sprechen – Rollen, keine Namen?] Ab Woche drei starte ich einen Piloten mit einem Meister, an einem Thema, das ihn selbst drückt. Nicht fünf Baustellen, sondern eine, bei der man nach ein paar Wochen etwas sieht. Messung plane ich diesmal von Anfang an ein, auch wenn es nur Start und Ende auf einem Zettel ist. Bis Tag 90 geht es darum, dass es hält: Standard festhalten, der Meister ist der Besitzer, eine feste Runde schaut drauf. Dann kommt das nächste Thema.`,
+ '„Ich würde sofort überall SMED einführen.“','„Erst zwei Wochen an die Linien, vor allem an die, die ich nicht kenne – ab Woche 3 ein Pilot mit einem Meister.“',
+ 'Was, wenn dir die Führung schon in Woche 2 ein Großprojekt gibt?',
+ '2 Wochen Gemba (v. a. Linien, die ich nicht kenne) → ab Woche 3 Pilot mit einem Meister → bis Tag 90 Standard + Übergabe. Messung von Anfang an.',true);
+
+Q('q23','tage90','Wie würdest du an eine Linie rangehen, die du nicht kennst?',
+ 'Ob dein Vorgehen übertragbar ist – oder ob du nur Rüsten an Anlage A kannst.',
+ ['Erst hingehen und schauen, bevor du Lösungen hast.','Mit den Leuten sprechen: Wo hakt es?','Kleines Thema, messen, Standard.'],
+ `Zuerst würde ich hingehen und zuschauen – ohne Lösung im Kopf. Eine Schicht mitlaufen, einen Wechsel oder eine Störung live sehen. Dann mit dem Meister und den Bedienern sprechen: Was nervt euch am meisten? Wo verliert ihr Zeit? Die Leute an der Linie wissen das meistens. Danach schaue ich, welche Zahlen es gibt: Stillstände, Ausschuss, Rüstzeiten, was auch immer da ist. Und dann suche ich mit dem Meister ein Thema aus, klein genug, dass man in ein paar Wochen etwas sieht. Mein Vorgehen an Anlage A lässt sich übertragen: aufschreiben, wo es vom Standard abweicht, mit dem Team besprechen, Maßnahmen ableiten, prüfen. Was ich nicht mache: am ersten Tag mit einer fertigen Lösung kommen. Ich kenne die Linie nicht – und die Kollegen merken sofort, wenn jemand sie nicht kennt, aber schon weiß, was zu tun ist.`,
+ '„Ich würde erst mal eine Wertstromanalyse machen.“ – bevor du mit einem Menschen gesprochen hast.','„Erst eine Schicht mitlaufen und fragen, was nervt – dann mit dem Meister ein kleines Thema aussuchen.“',
+ 'Woran erkennst du nach einer Schicht, wo die größte Verschwendung liegt?',
+ 'Hingehen, zuschauen, fragen, was nervt; vorhandene Zahlen; kleines Thema mit dem Meister.');
+
+Q('q24','schwach','Was ist deine größte Schwäche – oder dein größtes Lernfeld?',
+ 'Selbstreflexion mit echtem Beispiel – und was du konkret dagegen tust.',
+ ['Echte Schwäche mit Beispiel.','Was es gekostet hat.','Was du heute anders machst + zweites Lernfeld (Methode).'],
+ `Ich will Dinge oft selbst lösen und gebe zu spät ab. Das merke ich vor allem, wenn es eng wird. Ein Beispiel: [ergänzen: ein Tag als Vertretung oder eine Übergabe, bei der du lieber selbst gemacht hast, statt es einem Kollegen zu übergeben – was ist passiert?] Kurzfristig ging das gut. Aber der Kollege hat dabei nichts gelernt, und beim nächsten Mal stand ich wieder selbst da. Als Lean Consultant wäre das genau falsch, weil meine Arbeit ja ist, dass andere es können. Was ich heute mache: Ich frage mich bei jeder Aufgabe, wer sie eigentlich machen sollte, und lasse ihn machen, auch wenn es langsamer geht. Ein zweites Lernfeld ist die Methode. Vieles, was ich beim Rüsten gemacht habe, war im Kern SMED und PDCA, aber ich habe es nicht so genannt und nicht formal dokumentiert. [ergänzen: was du dafür schon tust – Kurs, Buch, Lean-Team begleiten] Das muss ich als Consultant sauber können, damit andere es nachmachen können.`,
+ '„Ich bin zu perfektionistisch.“','„Ich gebe zu spät ab – kurzfristig geht es, aber der Kollege lernt nichts dabei.“',
+ 'Woran würden wir in sechs Monaten merken, dass du daran gearbeitet hast?',
+ 'Ich gebe zu spät ab → andere lernen nicht mit. Heute: fragen, wer es machen sollte, und machen lassen. Plus: Methode formal lernen.',true);
+
+Q('q25','schwach','Erzähl von etwas, das nicht geklappt hat.',
+ 'Ob du Misserfolge ehrlich erzählen kannst – ohne Ausrede und ohne dich kleinzumachen – und was du daraus machst.',
+ ['Was nicht geklappt hat – konkret.','Warum (deine Anteile).','Was du daraus gemacht hast.'],
+ `Was an Anlage A nur halb geklappt hat, war die Absicherung. Die Maßnahmen haben gewirkt, die Wechsel waren danach meistens bei 3 bis 5 Stunden statt rund 8. Aber der Standard hing zu sehr an mir. Die Abweichungen vom Rüstdrehbuch aufschreiben und besprechen, das lief vor allem, weil ich drangeblieben bin. Mein Anteil daran: Ich habe die Vorgesetzten zu spät eingebunden. Sie waren informiert, aber sie haben den Standard nicht selbst eingefordert. Und gemessen habe ich auch nicht sauber, eine Stoppuhr-Studie gab es nicht. [deine Erfahrung ergänzen: ein konkreter Moment, an dem du gemerkt hast, dass es ohne dich wackelt] Daraus habe ich zwei Dinge mitgenommen. Erstens: Führung von Anfang an rein, der Meister ist der Besitzer. Zweitens: Messung vorher einplanen, auch wenn es nur Start und Ende pro Wechsel auf einem Zettel ist. Genau das würde ich als Consultant von Tag eins an machen.`,
+ '„Eigentlich hat alles geklappt.“ – oder: Schuld bei anderen.','„Die Maßnahmen haben gewirkt – aber abgesichert habe ich den Standard zu spät. Das war mein Anteil.“',
+ 'Wie hast du reagiert, als du gemerkt hast, dass es wackelt?',
+ 'Halb geklappt: Maßnahmen wirkten, aber Standard hing an mir und Messung fehlte – mein Anteil.');
+
+Q('q26','rueck','Hast du noch Fragen an uns?',
+ 'Ob du dich ernsthaft mit der Rolle beschäftigt hast – und ob du an Wirkung denkst, nicht an Vorteile.',
+ ['Zwei bis drei echte Fragen zur Rolle.','Mindestens eine zu Erfolg / Erwartungen.','Keine Fragen zu Urlaub, Homeoffice, Gehalt als erste Frage. Anrede im Gespräch so wie bei euch üblich.'],
+ `Ja, drei Fragen habe ich. Erstens: Woran würdet ihr nach einem Jahr merken, dass die Stelle gut besetzt ist? Ich möchte wissen, woran ich gemessen werde. Zweitens: Mit welchem Bereich oder welcher Linie würde ich wahrscheinlich anfangen, und gibt es da schon ein Thema, das drückt? Dann kann ich mich vorbereiten und muss nicht bei null anfangen. Und drittens: Wie arbeitet das Lean-Team mit den Meistern zusammen – eher auf Anfrage aus den Bereichen, oder mit festen Themen von der Werkleitung? Das ist mir wichtig, weil ich an Anlage A gelernt habe, dass ein Standard nur hält, wenn die Führung ihn trägt. Wenn noch Zeit ist, würde ich gern wissen, [deine Erfahrung ergänzen: eine eigene Frage, z. B. zur Einarbeitung oder zu Schulungen]. Danke, dass ihr euch die Zeit genommen habt.`,
+ '„Nein, eigentlich ist alles klar.“ – oder als erste Frage: „Wie ist das mit Homeoffice?“','„Woran würdet ihr nach einem Jahr merken, dass die Stelle gut besetzt ist?“',
+ 'Warum ist dir das wichtig?',
+ 'Immer 2–3 Fragen: Erfolg nach 1 Jahr? Startbereich? Zusammenarbeit Lean-Team ↔ Meister?');
+/* ===== Lean-Wissen ===== */
+const WISSEN=[
+ {id:'w_smed',t:'SMED / Rüstzeit',def:'Rüstzeit verkürzen: Arbeiten trennen in intern (geht nur bei stehender Anlage) und extern (geht bei laufender Anlage), möglichst viel von intern nach extern verlagern, dann beides straffen.',
+  bsp:'Anlage A: Der Werkzeugwagen kam erst, wenn die Maschine stand – eine externe Tätigkeit lief intern. Wagen vor den Auslauf gezogen = nach extern verlagert. Formatwechsel von rund 8 auf meistens 3–5 Stunden (Quelle: Rüstauswertungen).',
+  say:'„Was du vorher machen kannst, mach vorher – dann steht die Anlage kürzer.“',falle:'Das Akronym erklären statt die Idee. Und: Rüstzeit zählt vom letzten Gutteil des alten bis zum ersten Gutteil des neuen Produkts – nicht nur das Schrauben.'},
+ {id:'w_oee',t:'OEE',def:'Gesamtanlageneffektivität = Verfügbarkeit × Leistung × Qualität – wie viel der geplanten Zeit wirklich Gutware in Sollgeschwindigkeit entsteht.',
+  bsp:'Lange Formatwechsel wie an Anlage A drücken die Verfügbarkeit – wenn Rüsten nicht als geplanter Stillstand rausgerechnet wird. [ergänzen: Wie wird bei dir Rüsten in der OEE gerechnet?] Kleine Stopps drücken die Leistung, Ausschuss die Qualität. Eine formale OEE-Messung gab es an Anlage A nicht.',
+  say:'„OEE sagt mir, ob die Anlage steht, zu langsam läuft oder Schlechtteile macht – und daran sehe ich, wo ich anfange.“',falle:'Eine OEE-Zahl nennen, die du nicht sicher kennst. Oder OEE als Ziel an sich – sie zeigt nur, wo es weh tut.'},
+ {id:'w_5s',t:'5S',def:'Sortieren, Setzen (feste Plätze), Säubern, Standardisieren, Selbstdisziplin – damit man nicht sucht und Abweichungen sofort sieht.',
+  bsp:'Werkzeugwagen an Anlage A mit festem Platz vor dem Auslauf: da, bevor die Maschine stoppt. [deine Erfahrung ergänzen: feste Plätze auf dem Wagen?]',
+  say:'„5S heißt für mich: Beim Wechsel sucht keiner – alles hat seinen Platz.“',falle:'„Wir haben 5S eingeführt“ ohne Ergebnis. 5S immer an ein echtes Problem hängen, z. B. Suchzeiten beim Rüsten.'},
+ {id:'w_muda',t:'7+1 Verschwendungen (Muda)',def:'Alles, was Zeit oder Geld kostet, ohne dass der Kunde es bezahlt: Transport, Bestand, Bewegung, Warten, Überproduktion, Überbearbeitung, Fehler – plus ungenutztes Potenzial der Mitarbeiter.',
+  bsp:'Anlage A: Warten (auf Schlosser und Werkzeugwagen) · Bewegung (Werkzeug holen, unnötiges Hantieren) · Tätigkeiten ohne Produktbezug im Stillstand = nicht wertschöpfend (die Maschine wartet: Warten/Bewegung) · ungenutztes Wissen der Schicht. Externe Arbeit im Stillstand ist ein SMED-Thema (richtige Arbeit, falsche Zeit). Überbearbeitung heißt: mehr Aufwand, als der Kunde verlangt.',
+  say:'„Beim Rüsten sehe ich vor allem Warten und Laufwege – die Maschine steht, und alle holen etwas.“',falle:'Die Liste aufsagen, ohne ein Beispiel von der eigenen Linie.'},
+ {id:'w_vsm',t:'Wertstrom (Value Stream Mapping)',def:'Den ganzen Fluss eines Produkts vom Rohstoff bis zum Versand auf einem Bild – Material- und Informationsfluss, Bestände, Wartezeiten – um zu sehen, wo Zeit liegt, ohne dass Wert entsteht.',
+  bsp:'Generisch: Bei einer Produktlinie sieht man z. B., wo Material zwischen Herstellung und Verpackung liegt und wartet. [deine Erfahrung ergänzen: Warst du schon bei einer Wertstromaufnahme dabei?]',
+  say:'„Den Wertstrom würde ich mit dem Team am Ort aufnehmen – mit Stift und Papier, nicht am Schreibtisch.“',falle:'Mit einer Wertstromanalyse anfangen, bevor du mit einem Menschen an der Linie gesprochen hast.'},
+ {id:'w_pdca',t:'PDCA',def:'Plan – Do – Check – Act: planen, im Kleinen umsetzen, prüfen, ob es wirkt, und dann festschreiben oder neu anfangen.',
+  bsp:'Anlage A: Vorher die Ist-Aufnahme – Abweichungen vom Rüstdrehbuch aufgeschrieben. Plan: aus den Abweichungen Ursachen und Maßnahmen festgelegt. Do: Maßnahmen umgesetzt. Check: in der Rüstauswertung geprüft, ob sie wirken. Act: Wirksames in den Standard übernommen.',
+  say:'„Ich prüfe, ob eine Maßnahme wirkt, bevor ich sie Standard nenne.“',falle:'Nur Plan und Do – kein Check. Dann weiß keiner, ob es etwas gebracht hat.'},
+ {id:'w_a3',t:'A3',def:'Ein Problem auf einem Blatt (DIN A3): Hintergrund, Ist-Zustand, Ziel, Ursachen, Maßnahmen, Nachverfolgung – PDCA sichtbar gemacht.',
+  bsp:'Anlage A ließe sich so auf ein Blatt bringen: Ist rund 8 h, Ursachen (Wagen zu spät, Schlosser nicht eingeplant, Pausen im Wechsel), Maßnahmen, Ergebnis meistens 3–5 h, offener Punkt: Messung.',
+  say:'„Ein A3 zwingt mich, erst das Problem zu verstehen, bevor ich über Lösungen rede.“',falle:'Das A3 als Formular ausfüllen, statt es gemeinsam mit dem Bereich zu erarbeiten.'},
+ {id:'w_5why',t:'5-Why',def:'So oft „Warum?“ fragen (Faustregel: etwa fünfmal), bis man bei einer Ursache ist, die man abstellen kann – nicht beim Symptom.',
+  bsp:'Lange Rüstzeit → Maschine steht ohne Rüsten → Warten auf Werkzeug → Wagen kommt erst nach dem Stopp → [Ursache ergänzen]. Maßnahme: Wagen vor den Auslauf.',
+  say:'„Wenn die Antwort ein Name ist, habe ich zu früh aufgehört zu fragen.“',falle:'Bei einem Schuldigen stehen bleiben. Bei mehreren Ursachen reicht eine Kette nicht – dann Ishikawa.'},
+ {id:'w_ishi',t:'Ishikawa (Fischgräte)',def:'Mögliche Ursachen eines Problems sortiert sammeln – meist nach Mensch, Maschine, Material, Methode, Messung, Mitwelt (6M).',
+  bsp:'Lange Wechsel an Anlage A: Methode (Planung/Organisation: externe Arbeiten im Stillstand, Werkzeugwagen erst nach dem Stopp, Schlosser nicht eingeplant, Pausen im Wechsel). Mensch nur für Qualifikation, Erfahrung, Besetzung: [ergänzen: gab es dazu etwas?]',
+  say:'„Mit der Fischgräte sammle ich mit der Schicht erst alle Ursachen, bevor wir eine auswählen.“',falle:'Ein Diagramm voller Vermutungen – ohne zu prüfen, welche Ursache wirklich zutrifft.'},
+ {id:'w_std',t:'Standardarbeit',def:'Die derzeit beste bekannte Art, eine Arbeit zu machen – aufgeschrieben, damit jede Schicht es gleich macht, und Basis für jede Verbesserung.',
+  bsp:'Das Rüstdrehbuch an Anlage A. Abweichungen davon wurden aufgeschrieben und besprochen.',
+  say:'„Ohne Standard weiß ich nicht, was eine Abweichung ist.“',falle:'Standard = ausgehängtes Papier. Er hält nur, wenn die Schicht ihn mitbaut und die Führung ihn einfordert.'},
+ {id:'w_sfm',t:'Shopfloor-Management / KPI-Board',def:'Führung vor Ort: kurze, feste Runden am Board mit wenigen Kennzahlen, Abweichungen und Maßnahmen mit Name und Termin – und Eskalation, wenn die Ebene es nicht lösen kann.',
+  bsp:'Die Rüstauswertung an Anlage A war im Kleinen so eine Runde. Gefehlt hat die Führung darin. [deine Erfahrung ergänzen: Boards in deinem Bereich]',
+  say:'„Das Board ist nur Werkzeug – entscheidend ist, dass daraus Maßnahmen mit Namen werden.“',falle:'Boards aufhängen, die keiner nutzt. Zu viele Kennzahlen.'},
+ {id:'w_kvp',t:'Kaizen / KVP',def:'Kontinuierliche Verbesserung in kleinen Schritten, getragen von den Leuten, die die Arbeit machen – nicht einmalige Großprojekte.',
+  bsp:'Anlage A: nicht ein großer Wurf, sondern mehrere kleine Maßnahmen aus der Rüstauswertung (Wagen, Schlosser, Pausen).',
+  say:'„Viele kleine Schritte aus der Schicht halten besser als ein großes Projekt von oben.“',falle:'KVP als Ideen-Briefkasten, bei dem nie etwas zurückkommt.'},
+ {id:'w_tpm',t:'TPM (kurz)',def:'Total Productive Maintenance: Produktion und Instandhaltung sorgen gemeinsam dafür, dass Anlagen störungsfrei laufen – u. a. durch Pflege und Kontrollen durch die Bediener.',
+  bsp:'Beim Rüsten gefundene Defekte gleich beheben lassen; Schlosser fest für den Wechsel eingeplant – Produktion und Instandhaltung planen zusammen.',
+  say:'„Beim Rüsten habe ich die Maschine offen – das ist der beste Moment, Defekte zu finden.“',falle:'TPM als reine Instandhaltungsaufgabe sehen.'},
+ {id:'w_poka',t:'Poka Yoke',def:'Fehlhandlungen durch Gestaltung verhindern oder sofort sichtbar machen – z. B. Teile, die nur in einer Richtung passen.',
+  bsp:'Generisch beim Formatwechsel: Formatteile so kennzeichnen oder formen, dass nur das richtige Teil passt. [deine Erfahrung ergänzen: ein Beispiel von deiner Linie]',
+  say:'„Besser als ‚aufpassen‘ ist, wenn der Fehler gar nicht erst passieren kann.“',falle:'Als Lösung „besser aufpassen“ oder „schulen“ vorschlagen, wo eine einfache technische Sperre ginge.'}
+];
+
+/* ===== Quiz (a = Index richtige Antwort; Optionen werden gemischt) ===== */
+const QUIZ=[
+ ['Aus welchen drei Faktoren besteht OEE?',['Verfügbarkeit × Leistung × Qualität','Rüstzeit × Taktzeit × Ausschuss','Verfügbarkeit + Leistung + Qualität','Personal × Maschine × Material'],0,'OEE multipliziert Verfügbarkeit, Leistung und Qualität.'],
+ ['Was ist beim SMED „internes Rüsten“?',['Arbeiten, die nur bei stehender Anlage gehen','Rüsten durch eigene Mitarbeiter statt Fremdfirma','Arbeiten, die bei laufender Anlage gehen','Rüsten innerhalb einer Schicht'],0,'Intern = nur im Stillstand möglich. Extern = bei laufender Anlage.'],
+ ['Was ist das Kernprinzip von SMED?',['Internes in externes Rüsten verlagern, dann beides straffen','Mehr Leute zum Rüsten schicken','Seltener rüsten','Rüstzeit aus der OEE herausrechnen'],0,'Erst trennen, dann verlagern, dann straffen.'],
+ ['Der Werkzeugwagen kommt erst, wenn die Maschine steht. Was ist das nach SMED?',['Externe Tätigkeit, die intern erledigt wird','Interne Tätigkeit','Poka Yoke','Überproduktion'],0,'Werkzeug bereitstellen geht bei laufender Anlage – also extern. An Anlage A: Wagen vor den Auslauf.'],
+ ['Rüstzeit zählt von … bis …',['letztes Gutteil alt bis erstes Gutteil neu','Maschine aus bis Maschine an','Schichtbeginn bis Schichtende','erster Handgriff bis letzter Handgriff'],0,'Inklusive Anfahren und Einstellen bis zum ersten Gutteil.'],
+ ['Welche gehört NICHT zu den 7 klassischen Verschwendungen?',['Abfüllen/Verarbeiten des Produkts, das der Kunde bezahlt','Warten','Überproduktion','Bewegung'],0,'Das ist Wertschöpfung, keine Verschwendung. Die 7: Transport, Bestand, Bewegung, Warten, Überproduktion, Überbearbeitung, Fehler (+ ungenutztes Potenzial).'],
+ ['Alle stehen an der stehenden Maschine und warten auf die Schlosser. Welche Muda?',['Warten','Transport','Bestand','Überbearbeitung'],0,'Warten – Menschen und Maschine stehen.'],
+ ['Was ist die „achte“ Verschwendung?',['Ungenutztes Potenzial der Mitarbeiter','Energie','Papier','Meetings'],0,'Oft ergänzt: Wissen und Ideen der Mitarbeiter werden nicht genutzt.'],
+ ['Wofür steht PDCA?',['Plan – Do – Check – Act','Prepare – Deliver – Control – Adjust','Plan – Decide – Change – Audit','Produkt – Daten – Controlling – Analyse'],0,'Planen, umsetzen, prüfen, festigen/neu anfangen.'],
+ ['Was fehlt, wenn niemand weiß, ob die Maßnahme gewirkt hat?',['Check – prüfen, ob es wirkt','Plan','Do','Act'],0,'Check ist der Schritt, der am häufigsten fehlt: umgesetzt heißt noch nicht gewirkt.'],
+ ['Was steht auf einem A3?',['Problem, Ist, Ursachen, Maßnahmen, Nachverfolgung auf einem Blatt','Nur die Kennzahlen einer Linie','Ein Organigramm','Die Arbeitsanweisung'],0,'A3 = PDCA auf einem Blatt.'],
+ ['Wann hast du bei 5-Why zu früh aufgehört?',['Wenn die Antwort ein Name oder Schuldiger ist','Nach genau vier Fragen','Wenn es eine technische Ursache ist','Nie – fünf ist fix'],0,'Ein Name ist fast nie die Ursache – weiter fragen: Warum konnte es passieren?'],
+ ['Wofür nutzt man ein Ishikawa-Diagramm?',['Mögliche Ursachen sortiert sammeln (z. B. 6M)','Rüstzeiten messen','Schichten planen','OEE berechnen'],0,'Fischgräte: Mensch, Maschine, Material, Methode, Messung, Mitwelt.'],
+ ['Was bedeutet das zweite S bei 5S?',['Setzen – feste Plätze','Säubern','Sicherheit','Schulen'],0,'Sortieren, Setzen, Säubern, Standardisieren, Selbstdisziplin. Das zweite S heißt je nach Werk auch Systematisieren oder Ordnen. [ergänzen: Wie heißt es bei dir?]'],
+ ['Wann ist 5S am ehesten nachhaltig?',['Wenn es an ein echtes Problem wie Suchzeiten gehängt wird','Vor einem Besuch der Geschäftsführung','Wenn es der Consultant alleine macht','Einmal im Jahr als Aktion'],0,'Mit echtem Nutzen versteht jeder, warum es sich lohnt.'],
+ ['Was ist Standardarbeit?',['Die derzeit beste bekannte Art – Basis für Verbesserung','Eine unveränderliche Vorschrift','Die schnellste mögliche Art','Das, was der Meister vorgibt'],0,'Ein Standard wird verbessert – er ist nicht in Stein gemeißelt.'],
+ ['Was hält einen Standard am ehesten am Leben?',['Die Schicht baut mit, die Führung fordert ihn ein','Ein laminierter Aushang','Mehr Kontrolle durch den Consultant','Eine Mail an alle'],0,'Deine Lehre: Vorgesetzte früher einbinden, damit die Führung den Standard trägt.'],
+ ['Was ist der Kern von Shopfloor-Management?',['Führung vor Ort mit kurzen Runden, wenigen Kennzahlen, Maßnahmen mit Name und Termin','Möglichst viele Kennzahlen am Board','Monatliche Berichte an die Werkleitung','Ein neues IT-System'],0,'Das Board ist nur das Werkzeug.'],
+ ['Was zeigt ein Wertstrom?',['Material- und Informationsfluss vom Rohstoff bis zum Versand','Die Organisation der Abteilung','Die Wartungspläne','Die Rüstreihenfolge'],0,'Mit Beständen und Wartezeiten zwischen den Prozessen.'],
+ ['Was ist Poka Yoke?',['Fehler durch Gestaltung unmöglich oder sofort sichtbar machen','Japanisch für Aufräumen','Eine Kennzahl','Ein Schulungskonzept'],0,'Z. B. Teile, die nur in einer Richtung passen.'],
+ ['Was bedeutet TPM im Kern?',['Produktion und Instandhaltung halten Anlagen gemeinsam störungsfrei','Nur die Instandhaltung ist zuständig','Ein Planungstool','Total Process Measurement'],0,'Total Productive Maintenance – inklusive Pflege durch Bediener.'],
+ ['Kaizen/KVP heißt vor allem …',['kleine, stetige Verbesserungen durch die Leute vor Ort','ein großes Projekt pro Jahr','Kostensenkung durch Personalabbau','Berater-Workshops'],0,'Viele kleine Schritte, getragen vom Team.'],
+ ['Es gibt keine sauberen Daten. Wie nennst du ein Ergebnis im Gespräch?',['Range + Quelle + was nicht gemessen wurde','Eine glatte Prozentzahl','Gar nicht','„Deutlich besser“'],0,'Z. B.: „rund 8 auf meistens 3–5 Stunden, laut Rüstauswertungen, keine Stoppuhr-Studie“.'],
+ ['Ein Meister zieht nicht mit. Was ist der beste erste Schritt?',['Zu ihm gehen und verstehen, was ihn drückt','Sofort an die Werkleitung eskalieren','Direkt mit seiner Schicht anfangen','Abwarten'],0,'Erst verstehen, zu seinem Thema machen – nie an ihm vorbei.'],
+ ['Was ist die beste Antwort auf „Das bringt eh nichts“?',['Ernst nehmen und fragen: „Was nervt dich beim Wechsel am meisten?“','„Doch, das ist bewiesen.“','Ignorieren','An den Meister verweisen'],0,'Beteiligen statt überzeugen – plus dein eigener Satz für Skeptiker (Frage „Das bringt eh nichts“).'],
+ ['Was unterscheidet den Consultant vom Rüstoptimierer am stärksten?',['Er befähigt andere, statt es selbst zu machen','Er hat mehr Fachwissen über eine Anlage','Er arbeitet nur im Büro','Er ordnet Maßnahmen an'],0,'Befähigen, Methode, mehrere Bereiche – ohne Weisungsbefugnis.'],
+ ['Womit startest du in den ersten 90 Tagen am sinnvollsten?',['2 Wochen Gemba – vor allem an Linien, die du nicht kennst –, ab Woche 3 Pilot mit einem Meister','Sofort an allen Linien SMED einführen','Erst drei Monate Konzept am Schreibtisch','An jeder Linie ein KPI-Board aufhängen'],0,'Erst sehen, dann ein Pilot mit einem Meister als Besitzer – bis Tag 90 Standard und Übergabe.']
+];
+
+/* ===== Consultant-Denken ===== */
+const LESSONS=[
+ {id:'l1',t:'Von „ich habe gemacht“ zu „wir haben erreicht“',txt:'Als Consultant wirkst du über andere. Erzähl, was das Team erreicht hat und was deine Rolle dabei war. Zu viel „ich“ klingt nach Einzelkämpfer, nur „wir“ klingt, als hättest du nichts getan. Faustregel: wir für das Ergebnis, ich für deinen konkreten Beitrag.',
+  bad:'Ich habe die Rüstzeit an Anlage A von 8 auf 3 Stunden gesenkt.',
+  sol:'An Anlage A sind wir von rund 8 auf meistens 3 bis 5 Stunden gekommen. Mein Teil war, die Abweichungen aufzuschreiben und in der Rüstauswertung mit dem Team Maßnahmen abzuleiten.',
+  check:[[/\bwir\b/i,'„wir“ für das Ergebnis'],[/\b(mein|ich)\b/i,'dein eigener Beitrag']]},
+ {id:'l2',t:'Problem zuerst, Methode danach',txt:'Kein Meister wartet auf SMED. Er wartet darauf, dass seine Anlage weniger steht. Fang mit dem Problem an, das jemanden drückt. Die Methode kommt danach und darf auch fehlen.',
+  bad:'Ich würde an der Linie SMED und 5S einführen.',
+  sol:'Ich würde erst schauen, wo die Linie am meisten Zeit verliert – wenn es die Wechsel sind, würden wir trennen, was vorher gehen kann, und das vor den Stopp ziehen.',
+  check:[[/(problem|nervt|wartet|verliert)/i,'ein Problem zuerst']]},
+ {id:'l3',t:'Zahlen ehrlich: Range, Quelle, was nicht gemessen wurde',txt:'Eine glatte Zahl klingt stark, bis jemand nachfragt. Sag besser eine Range, woher sie kommt und was nicht gemessen wurde. Das macht dich glaubwürdiger, nicht schwächer.',
+  bad:'Wir haben die Rüstzeit um 50 Prozent reduziert.',
+  sol:'Vorher rund 8 Stunden, danach meistens 3 bis 5, je nach Format und Schicht. Quelle sind die Rüstauswertungen. Eine Stoppuhr-Studie gab es nicht – das ist also nicht gemessen, sondern ausgewertet.',
+  check:[[/\d+\s*(bis|–|-)\s*\d+/,'Range statt glatter Zahl'],[/(quelle|rüstauswertung|schichtbuch|laut)/i,'Quelle'],[/(nicht gemessen|keine stoppuhr|keine .*messung|nicht sauber)/i,'was nicht gemessen wurde']]},
+ {id:'l4',t:'Coachen statt anordnen',txt:'Als Consultant hast du keine Weisungsbefugnis. Du wirkst über Fragen. Die Schicht findet die Lösung, und die Kollegen stellen ihr Ergebnis selbst vor, zum Beispiel dem Meister. Dann gehört das Ergebnis ihnen.',
+  bad:'Ich sage der Schicht, dass der Werkzeugwagen ab jetzt vor dem Stopp da sein muss.',
+  sol:'Ich frage die Schicht: Wo habt ihr beim letzten Wechsel gewartet? Was schlagt ihr vor, damit alles da ist, bevor die Maschine stoppt? Eure Lösung stellt ihr dann selbst dem Meister vor.',
+  check:[[/\?/,'mindestens eine Frage'],[/(ihr selbst|eure|schlagt)/i,'die Schicht als Besitzer (ihr selbst / eure / schlagt)']]},
+ {id:'l5',t:'Der Standard muss ohne dich halten',txt:'Ein Erfolg, der nur hält, solange du da bist, ist keiner. Frag von Anfang an: Wer trägt das nach mir? Welche Runde schaut regelmäßig drauf? Deine eigene Lehre: die Vorgesetzten früher einbinden.',
+  bad:'Ich schaue jede Woche selbst nach, ob sich alle an den Standard halten.',
+  sol:'Ich kläre mit dem Meister von Anfang an, dass er den Standard einfordert – in einer festen Runde, auch wenn ich nicht da bin. Ich komme nach ein paar Wochen zum Nachschauen.',
+  check:[[/(meister|führung|vorgesetzt|schichtleit)/i,'Führung als Träger'],[/(runde|regelmäßig|wöchentlich|fest)/i,'feste Routine']]}
+];
+
+/* ===== Kill-Phrasen ===== */
+const KILLS=[
+ {k:'Lean-Experte',re:/lean[- ]?(experte|expert|profi|spezialist)|kenne mich .*gut aus mit lean/i,why:'Du bist Rüstpraktiker, kein Lean-Experte – wer so anfängt, wird geprüft und fällt.',repl:'„Ich habe an Anlage A im Kern SMED gemacht – [ergänzen: lernst du gerade etwas? Kurs/Schulung]“'},
+ {k:'Perfektionismus als Schwäche',re:/perfektionis/i,why:'Die Standard-Floskel. Jeder Interviewer hört „keine echte Antwort“.',repl:'Nimm deine echte Schwäche: „Ich gebe zu spät ab – kurzfristig geht es, aber der Kollege lernt nichts dabei.“'},
+ {k:'Kotter / Change-Management-Modell',re:/kotter|change[- ]?management|8[- ]stufen|unfreezing|lewin/i,why:'Lehrbuch statt Erfahrung. Intern will man wissen, wie DU Leute an der Linie mitnimmst.',repl:'„Ich fange bei dem an, was die Kollegen selbst nervt – die Maßnahmen kommen aus ihrer Runde.“'},
+ {k:'5S ohne Ergebnis',special:'5s',why:'„5S eingeführt“ ohne Wirkung klingt nach Aufräumaktion.',repl:'„Der Werkzeugwagen steht vor dem Auslauf, bevor die Maschine stoppt – dann sucht beim Wechsel keiner.“'},
+ {k:'Mehr Kontrolle',re:/mehr kontroll|stärker kontrollier|kontrollen? verschärf|konsequenter kontrollier/i,why:'Klingt nach Aufpasser, nicht nach Coach. Standards halten über Führung und Beteiligung.',repl:'„Der Meister fordert den Standard in einer festen Runde ein – die Schicht hat ihn mitgebaut.“'},
+ {k:'Firmen-Leitbild runterbeten',special:'purpose',re:/leitbild|purpose|unsere werte|unser qualitätsversprechen|unsere mission|firmenphilosophie/i,why:'Leitbild aufsagen wirkt auswendig gelernt – außer du machst es an der Linie konkret.',repl:'„Unser Qualitätsversprechen ist für mich an der Linie ganz konkret: gleiche Qualität nach jedem Formatwechsel.“'},
+ {k:'„Ich will mich weiterentwickeln“',re:/(mich|mir) (weiter)?entwickeln|neue herausforderung/i,why:'Sagt jeder. Es sagt nichts darüber, warum gerade diese Rolle.',repl:'„Ich will das, was an Anlage A funktioniert hat, an mehr Linien möglich machen.“'},
+ {k:'Prozent ohne Quelle',special:'prozent',why:'Eine glatte Prozentzahl ohne Quelle kippt bei der ersten Nachfrage.',repl:'„Von rund 8 auf meistens 3 bis 5 Stunden – laut Rüstauswertungen, keine Stoppuhr-Studie.“'},
+ {k:'Floskel „Leute mitnehmen“',re:/leute mitnehmen|mitarbeiter mitnehmen|abholen, wo sie stehen|ins boot holen/i,why:'Floskel ohne Inhalt – der Interviewer fragt sofort: Wie genau?',repl:'„Ich frage, was nervt, und die Kollegen stellen ihr Ergebnis selbst dem Meister vor.“'},
+ {k:'SMED-Akronym erklären',re:/single minute exchange|shigeo shingo/i,why:'Lehrbuchwissen statt Verständnis – am Band verlierst du damit jeden.',repl:'„Was du vorher machen kannst, mach vorher – dann steht die Anlage kürzer.“'},
+ {k:'Einzelkämpfer „ich allein“',re:/\bich (ganz )?allein|alles selbst gemacht|im alleingang/i,why:'Als Consultant wirkst du über andere – Alleingänge sind ein Warnsignal.',repl:'„Wir sind auf meistens 3 bis 5 Stunden gekommen – mein Teil war, die Abweichungen aufzuschreiben und Maßnahmen abzuleiten.“'}
+];
+
+const RUECK=['Woran würdet ihr nach einem Jahr merken, dass die Stelle gut besetzt ist?','Mit welchem Bereich oder welcher Linie würde ich wahrscheinlich anfangen – gibt es dort schon ein drückendes Thema?','Wie arbeitet das Lean-Team mit den Meistern zusammen – auf Anfrage oder mit festen Themen?','Wie sieht die Einarbeitung aus – gibt es Schulungen in Lean-Methoden oder ein Mentoring?','Wer entscheidet, welche Themen das Lean-Team angeht – und wie wird Erfolg berichtet?'];
+const FAKTEN=['Anlage A: Formatwechsel rund 8 h → meistens 3–5 h, je nach Format/Schicht. Quelle: Rüstauswertungen/Schichtbuch; keine Stoppuhr-Studie, kein formales OEE; Anzahl Wechsel/Zeitraum [ergänzen]. Die Zahl im Gespräch höchstens zweimal nennen.','Rolle: 2 Jahre Vertretung Vorarbeiter, 1 Jahr Rüstoptimierer – [Jahre gesamt ergänzen].','Maßnahmen: Werkzeugwagen vor den Auslauf · Schlosser fest eingeplant · Pausen nicht im Wechsel · externe und unnötige Arbeiten raus aus dem Stillstand. Lehre: Vorgesetzte früher einbinden.'];
+/* ===== Spiel-Kern ===== */
+const KEY='leandota_v1';
+const QM=Object.fromEntries(QS.map(q=>[q.id,q]));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=s=>esc(s).replace(/\[[^\]]+\]/g,m=>{const t=m.slice(1,-1).replace(/^(deine Erfahrung )?ergänzen:?\s*/i,'').replace(/\s*ergänzen$/i,'').trim();return '<span class="gap" title="Platz für dein eigenes Beispiel">✎ Deine Erfahrung'+(t?': '+t:'')+'</span>';});
+const wc=s=>String(s||'').split(/\s+/).filter(Boolean).length;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function today(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function blank(){return {v:1,hero:null,gold:0,xp:0,mmr:1000,streak:{last:null,n:0},sound:false,q:{},qz:{},fc:{},les:{},kill:'',towers:{top:0,mid:0,bot:0},season:1,
+ items:{hint:1,boots:1,second:0,scroll:1},shield:0,boss:{wins:0,tries:0},ancient:{wins:0,tries:0},match:null,last:null,hist:[],life:{matches:0,lh:0,dn:0},libFilter:'all'};}
+let S=load();
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){const b=blank();const o=Object.assign(b,r);o.items=Object.assign(blank().items,r.items||{});o.towers=Object.assign(blank().towers,r.towers||{});return o;}}catch(e){}return blank();}
+let saveT=null;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('Speichern nicht möglich');}}
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(save,350);}
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2000);}
+
+/* Helden (eigene Figuren, CSS/SVG) */
+const HEROES=[
+ {id:'ruest',name:'Der Rüstmeister',tag:'smed',bonus:'+50 % Gold auf SMED & Rüsten',txt:'Kennt jeden Formatwechsel. Stark, wenn es um Stillstand, intern/extern und Werkzeugwagen geht.',col:'#c7772f',
+  svg:'<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="7" fill="none" stroke="#fff" stroke-width="3"/><g stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6v5M20 29v5M6 20h5M29 20h5M10 10l3.5 3.5M26.5 26.5L30 30M30 10l-3.5 3.5M13.5 26.5L10 30"/></g></svg>'},
+ {id:'seher',name:'Die Gemba-Seherin',tag:'wissen',bonus:'+50 % Gold auf Lean-Wissen',txt:'Sieht Verschwendung, wo andere Alltag sehen. Stark in der Top-Lane: Quiz und Karteikarten.',col:'#3f8f8a',
+  svg:'<svg viewBox="0 0 40 40"><path d="M4 20c4-7 10-11 16-11s12 4 16 11c-4 7-10 11-16 11S8 27 4 20z" fill="none" stroke="#fff" stroke-width="3"/><circle cx="20" cy="20" r="5" fill="#fff"/></svg>'},
+ {id:'coach',name:'Der Coach',tag:'coach',bonus:'+50 % Gold auf Widerstand & Coaching',txt:'Fragt, statt anzuordnen. Stark bei Meistern, Skeptikern und Führungsfragen.',col:'#6a5bc4',
+  svg:'<svg viewBox="0 0 40 40"><path d="M6 9h20v13H14l-6 5v-5H6z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M29 15h5v12h-2v4l-5-4h-8" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>'},
+ {id:'analyst',name:'Die Analystin',tag:'zahlen',bonus:'+50 % Gold auf OEE & Zahlen',txt:'Nennt Range und Quelle statt Fantasiezahlen. Stark bei OEE, Messung und Daten.',col:'#3a6fb8',
+  svg:'<svg viewBox="0 0 40 40"><g fill="#fff"><rect x="7" y="22" width="6" height="11" rx="1"/><rect x="17" y="14" width="6" height="19" rx="1"/><rect x="27" y="7" width="6" height="26" rx="1"/></g></svg>'}];
+const HM=Object.fromEntries(HEROES.map(h=>[h.id,h]));
+function portrait(h,cls){return '<span class="portrait '+(cls||'')+'" style="background:radial-gradient(circle at 35% 30%,'+h.col+',#111 85%);border-color:'+h.col+'">'+h.svg+'</span>';}
+const CREEP_SVG='<svg class="sprite CLS" viewBox="0 0 64 64"><ellipse cx="32" cy="56" rx="18" ry="4" fill="#000" opacity=".4"/><path d="M14 46c0-14 8-26 18-26s18 12 18 26z" fill="#7d3a2f" stroke="#c0584a" stroke-width="2"/><circle cx="26" cy="36" r="3" fill="#ffd27a"/><circle cx="38" cy="36" r="3" fill="#ffd27a"/><path d="M22 20l-4-8M42 20l4-8" stroke="#c0584a" stroke-width="3" stroke-linecap="round"/></svg>';
+const BOSS_SVG='<svg class="sprite CLS" viewBox="0 0 64 64" style="width:84px;height:84px"><ellipse cx="32" cy="58" rx="24" ry="4" fill="#000" opacity=".4"/><rect x="12" y="18" width="40" height="36" rx="8" fill="#4b2d63" stroke="#b26be0" stroke-width="2"/><circle cx="32" cy="34" r="9" fill="none" stroke="#e8b84a" stroke-width="3"/><g stroke="#e8b84a" stroke-width="3"><path d="M32 21v4M32 43v4M19 34h4M41 34h4"/></g><path d="M14 20l-4-10 10 6M50 20l4-10-10 6" fill="#b26be0"/></svg>';
+const TOWER_SVG='<svg class="sprite CLS" viewBox="0 0 64 64"><path d="M20 58h24l-3-34H23z" fill="#6b3028" stroke="#d0503f" stroke-width="2"/><path d="M18 24h28l-4-10H22z" fill="#8d3a2e" stroke="#d0503f" stroke-width="2"/><circle cx="32" cy="10" r="5" fill="#ff9a6b"/></svg>';
+const ANC_SVG='<svg class="sprite CLS" viewBox="0 0 64 64" style="width:84px;height:84px"><path d="M8 58h48L44 30H20z" fill="#5a2620" stroke="#d0503f" stroke-width="2"/><path d="M32 4l10 26H22z" fill="#d0503f"/><circle cx="32" cy="40" r="6" fill="#ffb07a"/></svg>';
+
+/* Level, Ränge, Streak */
+function xpNeed(l){return 80+20*(l-1);}
+function levelInfo(xp){let l=1,rest=xp;while(l<25&&rest>=xpNeed(l)){rest-=xpNeed(l);l++;}return {l,rest,need:l<25?xpNeed(l):1};}
+const RANKS=[[0,'Einsteiger'],[1100,'Gemba-Gänger'],[1200,'Kaizen-Starter'],[1350,'Standard-Halter'],[1500,'Coach'],[1700,'Lean-Champion']];
+function rankOf(m){let r=RANKS[0][1];RANKS.forEach(([v,n])=>{if(m>=v)r=n;});return r;}
+function nextRank(m){const n=RANKS.find(([v])=>v>m);return n?n[1]+' ab '+n[0]+' MMR':'Höchster Rang';}
+function touchStreak(){const t=today(),y=today(new Date(Date.now()-864e5));if(S.streak.last===t)return;S.streak.n=S.streak.last===y?S.streak.n+1:1;S.streak.last=t;}
+
+/* Sound (WebAudio, standardmäßig aus) */
+let AC=null;
+function snd(kind){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const seq={hit:[[520,.07,'square']],lh:[[660,.07,'square'],[990,.12,'square']],dn:[[440,.07,'triangle'],[330,.12,'triangle']],dmg:[[140,.18,'sawtooth']],tower:[[392,.12,'triangle'],[294,.12,'triangle'],[196,.3,'triangle']],gold:[[1320,.05,'sine'],[1760,.08,'sine']],win:[[523,.12,'triangle'],[659,.12,'triangle'],[784,.25,'triangle']]}[kind]||[];let t=AC.currentTime;
+ seq.forEach(([f,d,ty])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(.07,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.9;});}catch(e){}}
+
+/* Floating Numbers */
+let PT={x:innerWidth/2,y:innerHeight/2};
+document.addEventListener('pointerdown',e=>{PT={x:e.clientX,y:e.clientY};},true);
+function floatTxt(t,cls,dy){const d=document.createElement('div');d.className='float '+cls;d.textContent=t;d.style.left=clamp(PT.x-30,8,innerWidth-140)+'px';d.style.top=clamp(PT.y-20+(dy||0),60,innerHeight-40)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1300);}
+
+/* Hero-Bonus-Tags: ein Regex je Held über den Item-Text (ausgewogen, siehe Report) */
+const TAG_RE={
+ smed:/rüst|smed|formatwechsel|werkzeug|stillstand|internes|externes|externe tätigkeit|stehender anlage|tpm|poka|instandhaltung|schlosser|störungsfrei/i,
+ wissen:/muda|verschwendung|\b5s\b|5-why|ishikawa|fischgräte|wertstrom|kaizen|kvp|gemba|standardarbeit/i,
+ coach:/meister|coach|widerstand|skeptik|bringt eh nichts|befähig|anordn|überzeug|mitzieh|vorgesetzt|fragen statt|führung/i,
+ zahlen:/oee|kpi|%|prozent|minuten|stunden|verfügbarkeit|leistung|qualität|kennzahl|mess|daten|zahl|range|quelle|erfolg|pdca|\ba3\b|check/i};
+function itemText(kind,id){if(kind==='quiz'){const it=QUIZ[id];return it[0]+' '+it[1][it[2]]+' '+it[3];}
+ if(kind==='q'){const q=QM[id];return q.q+' '+q.kern+' '+GL[q.g];}
+ if(kind==='w'){const w=WISSEN.find(x=>x.id===id);return w.t+' '+w.def;}
+ const l=LESSONS.find(x=>x.id===id);return l.t+' '+l.txt;}
+function tagsItem(kind,id){const t=itemText(kind,id),s=new Set();Object.entries(TAG_RE).forEach(([k,re])=>{if(re.test(t))s.add(k);});return s;}
+function mult(tags){return S.hero&&tags&&tags.has(HM[S.hero].tag)?1.5:1;}
+
+/* Kill-Check (Wortsuche, kein KI-Urteil) */
+const SPLIT=/(?<=[.!?])(?<!(?:^|[\s(])(?:ca|bzw|z\.B|z\. B|d\.h|u\.a|etc|Nr|ggf|evtl|inkl|vgl)\.)\s+(?=[A-ZÄÖÜ„"0-9])/;
+const LINE=/(linie|formatwechsel|wechsel|rüst|maschine|schicht|anlage)/i;
+function killCheck(text){const sents=String(text||'').split(/\n+/).flatMap(p=>p.split(SPLIT)).map(s=>s.trim()).filter(Boolean);const out=[];
+ KILLS.forEach(k=>{sents.forEach(s=>{let hit=false,ok=false;
+  if(k.special==='5s'){if(/\b5\s?s\b/i.test(s)&&!/\d/.test(s.replace(/\b5\s?s\b/ig,'')))hit=true;}
+  else if(k.special==='prozent'){if(/\d+([.,]\d+)?\s?(%|prozent)/i.test(s)&&!/(quelle|laut|rüstauswertung|schichtbuch|gemessen|messung)/i.test(s))hit=true;}
+  else if(k.re.test(s)){hit=true;if(k.special==='purpose'&&LINE.test(s))ok=true;}
+  if(hit)out.push({k,s,ok});});});return out;}
+function killHTML(res){if(!res.length)return '<div class="fbbox ok"><b>Keine Kill-Phrase gefunden.</b> Prüf trotzdem: echte Zahl mit Quelle? Konkretes Beispiel?</div>';
+ return res.map(r=>r.ok?'<div class="fbbox ok"><span class="badge ok">Erlaubt, weil linienbezogen</span> <b>'+esc(r.k.k)+'</b><br>„'+esc(r.s)+'“</div>':'<div class="fbbox bad"><span class="badge bad">'+esc(r.k.k)+'</span><br>„'+esc(r.s)+'“<br><span class="hint">'+esc(r.k.why)+'</span><br><b>Besser:</b> '+fmt(r.k.repl)+'</div>').join('');}
+
+/* Kill-Phrasen-Spotting: Beispielsätze (schlecht) + gute Sätze aus den Karten */
+const KILL_EX=[
+ ['Ich sehe mich als Lean-Experte für das ganze Werk.',0],['Meine größte Schwäche ist, dass ich zu perfektionistisch bin.',1],['Ich würde nach dem 8-Stufen-Modell von Kotter vorgehen.',2],
+ ['Wir haben an der Linie 5S eingeführt.',3],['Damit der Standard hält, braucht es einfach mehr Kontrolle.',4],['Unser Leitbild ist für mich die wichtigste Motivation.',5],
+ ['Ich möchte mich weiterentwickeln und suche eine neue Herausforderung.',6],['Wir haben die Rüstzeit um 50 Prozent reduziert.',7],['Man muss die Leute eben abholen, wo sie stehen.',8],
+ ['SMED steht für Single Minute Exchange of Die.',9],['Das habe ich im Alleingang umgesetzt.',10]];
+const strip=s=>String(s).replace(/^[„"]|[“"]$/g,'').replace(/[„“]/g,'');
+let GOOD=null;
+function goodPool(){if(GOOD)return GOOD;const c=[];QS.forEach(q=>c.push(strip(q.good)));KILLS.forEach(k=>c.push(strip(k.repl.replace(/^Nimm deine echte Schwäche: /,''))));
+ GOOD=[...new Set(c)].filter(s=>!/\[/.test(s)&&s.length<190&&!killCheck(s).some(r=>!r.ok));return GOOD;}
+function mkSpot(){const [bad,ki]=KILL_EX[Math.floor(Math.random()*KILL_EX.length)];const g=shuffle(goodPool()).slice(0,2);const opts=shuffle([{t:bad,bad:true},...g.map(t=>({t,bad:false}))]);return {k:'spot',opts,ki};}
+/* ===== Lernkarten-Bausteine (große, helle Lesefläche) ===== */
+function rateOf(id){return S.q[id]&&S.q[id].rate||null;}
+function qs(id){if(!S.q[id])S.q[id]={rate:null,seen:0,last:0,mine:''};return S.q[id];}
+function chip(r){return r?'<span class="chip '+r+'">'+r+'</span>':'<span class="chip">offen</span>';}
+function weight(id){const r=rateOf(id);return r==='neu'?0:r===null?1:r==='wackelt'?2:3;}
+function orderSR(ids){return ids.map(id=>({id,k:weight(id)+Math.random()*0.9,l:(S.q[id]&&S.q[id].last)||0})).sort((a,b)=>a.k-b.k||a.l-b.l).map(x=>x.id);}
+function stats(ids){const c={sitzt:0,wackelt:0,neu:0,offen:0};ids.forEach(id=>{c[rateOf(id)||'offen']++;});return c;}
+function pbar(ids){const c=stats(ids),n=ids.length||1;return '<div class="pbar"><i style="width:'+(c.sitzt/n*100)+'%"></i><i class="w" style="width:'+(c.wackelt/n*100)+'%"></i></div>';}
+function secPruef(q){return '<div class="sec"><h3>Was der Interviewer wirklich prüft</h3><p>'+fmt(q.pruef)+'</p></div>';}
+function secGer(q){return '<div class="sec"><h3>Antwort-Gerüst in 3 Schritten</h3><ol class="steps">'+q.ger.map(s=>'<li>'+fmt(s)+'</li>').join('')+'</ol></div>';}
+function musterBox(q){const w=wc(q.muster);return '<div class="muster">'+fmt(q.muster)+'</div><p class="hint">'+w+' Wörter ≈ '+Math.round(w/2.2)+' s gesprochen · Die Zahl im Gespräch höchstens zweimal nennen. · <span class="gap">✎ Deine Erfahrung</span> = Platz für dein eigenes Beispiel: einsetzen oder weglassen.</p>';}
+function mineBox(q){const m=qs(q.id).mine||'';return '<h4>Meine Antwort</h4><textarea id="mine" data-id="'+q.id+'" rows="9" placeholder="Deine eigene Version – wird automatisch gespeichert.">'+esc(m)+'</textarea><div class="row" style="margin-top:8px"><button class="btn sm" data-act="copyMuster">Musterantwort als Vorlage</button><button class="btn sm" data-act="checkMine">Kill-Phrasen prüfen</button><span class="hint" id="mineWc">'+wc(m)+' Wörter</span></div><div id="mineCheck"></div>';}
+function secFalle(q){return '<div class="sec"><h3>Falle / Kill-Phrase</h3><div class="falle"><span class="badge bad">vermeiden</span><div>'+fmt(q.bad)+'</div><span class="badge ok">besser</span><div>'+fmt(q.good)+'</div></div></div>';}
+function secNach(q){return '<div class="sec"><h3>Mögliche Nachfrage</h3><p>'+fmt(q.nach)+'</p></div>';}
+function fullCard(q){return '<div class="read">'+secPruef(q)+secGer(q)+'<div class="sec"><h3>Musterantwort · Meine Antwort</h3><div class="grid2"><div><h4>Musterantwort (deine Fakten, gesprochen)</h4>'+musterBox(q)+'</div><div>'+mineBox(q)+'</div></div></div>'+secFalle(q)+secNach(q)+'</div>';}
+function rateBtns(act,gold){return '<div class="rate"><button class="r-sitzt" data-act="'+act+'" data-r="sitzt">sitzt'+(gold?'<br><small>+'+gold[0]+' Gold</small>':'')+'</button><button class="r-wackelt" data-act="'+act+'" data-r="wackelt">wackelt'+(gold?'<br><small>+'+gold[1]+' Gold</small>':'')+'</button><button class="r-neu" data-act="'+act+'" data-r="neu">neu'+(gold?'<br><small>+'+gold[2]+' Gold</small>':'')+'</button></div>';}
+function rateQ(id,r){const o=qs(id);o.rate=r;o.seen=(o.seen||0)+1;o.last=Date.now();}
+
+/* ===== Match & Battle ===== */
+const LANES={top:{n:'Top-Lane · Lean-Wissen',s:'Quiz + Karteikarten',need:.7},mid:{n:'Mid-Lane · Gesprächsfragen',s:'Die 26 Interviewfragen – Hauptlane',need:.5},bot:{n:'Bot-Lane · Consultant-Denken',s:'Lektion + Kill-Phrasen spotten (Deny)',need:.7}};
+const QUIZ_T=20,LH_T=12,SPOT_T=15,JUNGLE_T=10,MID_T=90;
+const MIDG={sitzt:[30,40],wackelt:[30,40],neu:[30,40]},REQ_BONUS=10,ANC_IDS=['q01','q12','q16','q24'],ANC_N=5,ANC_NEED=3;
+function M(){return S.match;}
+function startMatch(){touchStreak();S.match={start:Date.now(),hp:100,gold:0,xp:0,lh:0,dn:0,qR:0,qT:0,sR:0,sT:0,rates:{sitzt:0,wackelt:0,neu:0},towers:0,rq:[],rquiz:[],midQ:orderSR(QS.map(q=>q.id)),midRe:{},b:null,boss:null,anc:null};save();}
+function gain(g,x,tags){const m=M(),k=mult(tags);g=Math.round(g*k);const before=levelInfo(S.xp).l;S.gold+=g;S.xp+=x;if(m){m.gold+=g;m.xp+=x;}
+ if(g)floatTxt('+'+g+' Gold'+(k>1?' ★':''),'g');if(x)floatTxt('+'+x+' XP','x',26);const after=levelInfo(S.xp).l;if(after>before){toast('Level '+after+' erreicht!');snd('win');}if(g)snd('gold');return g;}
+function damage(n){const m=M();if(!m)return;m.hp-=n;floatTxt('−'+n+' HP','r',-24);snd('dmg');const hb=$('#hpbar');if(hb){hb.classList.remove('dmg');void hb.offsetWidth;hb.classList.add('dmg');}
+ if(m.hp<=0){if(S.shield>0){S.shield=0;m.hp=100;toast('Schild der Standardarbeit rettet dich – volle HP!');}else{m.hp=0;save();setTimeout(()=>endMatch('tot'),700);}}}
+function pickQuiz(n,ex){const ids=QUIZ.map((_,i)=>i).filter(i=>!(ex||[]).includes(i));return ids.map(i=>{const o=S.qz[i]||{r:0,w:0};return {i,k:(o.w*2-o.r)+Math.random()*1.5};}).sort((a,b)=>b.k-a.k).slice(0,n).map(x=>x.i);}
+function quizCreep(i){return {k:'quiz',i,order:shuffle(QUIZ[i][1].map((_,j)=>j)),left:QUIZ_T};}
+function mkWave(type){let c=[];const m=M();
+ if(type==='top'){c=pickQuiz(4).map(quizCreep);c.splice(2+Math.floor(Math.random()*3),0,{k:'fc',id:shuffle(WISSEN)[0].id});}
+ else if(type==='mid'){for(let j=0;j<2;j++){if(!m.midQ.length)m.midQ=orderSR(QS.map(q=>q.id));c.push({k:'q',id:m.midQ.shift(),left:MID_T});}}
+ else if(type==='bot'){const l=LESSONS.slice().sort((a,b)=>((S.les[a.id]||{}).n||0)-((S.les[b.id]||{}).n||0)+Math.random()-.5)[0];c=[{k:'les',id:l.id},...[0,1,2].map(()=>Object.assign(mkSpot(),{left:SPOT_T}))];}
+ else if(type==='jungle'){c=[0,1,2,3,4].map(()=>Object.assign(mkSpot(),{left:JUNGLE_T}));}
+ else if(type==='boss'){c=pickQuiz(10).map(quizCreep);}
+ else if(type==='ancient'){const rest=shuffle(QS.map(q=>q.id).filter(id=>!ANC_IDS.includes(id)));c=[...ANC_IDS,rest[0]].map(id=>({k:'q',id,left:MID_T}));}
+ return c;}
+function startBattle(type){const m=M();if(!m)return;if(m.b&&!m.b.done&&!confirm('Laufende Welle abbrechen?'))return;
+ const b={type,creeps:mkWave(type),i:0,res:[],done:false,msg:''};
+ if(type==='boss'){b.lives=3+(S.shield?1:0);b.usedShield=!!S.shield;S.shield=0;S.boss.tries++;}
+ if(type==='ancient')S.ancient.tries++;
+ m.b=b;b.creeps[0].t0=Date.now();save();go('#battle');}
+function cur(){const b=M()&&M().b;return b&&!b.done?b.creeps[b.i]:null;}
+function nextCreep(){const b=M().b;b.i++;if(b.i>=b.creeps.length)return finishWave();b.creeps[b.i].t0=Date.now();save();render();window.scrollTo(0,0);}
+function quizAnswer(k){const b=M().b,c=cur();if(!c||c.ans!=null)return;const it=QUIZ[c.i];const ok=k>=0&&c.order[k]===it[2];const el=(Date.now()-c.t0)/1000;
+ if(!ok&&k>=0&&c.second){c.second=false;c.tried=(c.tried||[]).concat(k);toast('Zweite Chance genutzt – nochmal!');snd('dmg');render();return;}
+ c.ans=k;const st=S.qz[c.i]=S.qz[c.i]||{r:0,w:0};const m=M();const tags=tagsItem('quiz',c.i);
+ if(b.type!=='boss'){m.qT++;}
+ if(ok){st.r++;if(b.type!=='boss')m.qR++;const lh=el<=LH_T;c.res=lh?'lh':'ok';if(b.type==='boss')gain(25,20,tags);else{gain(lh?30:15,20,tags);if(lh){m.lh++;snd('lh');}else snd('hit');}}
+ else{st.w++;c.res='bad';if(!m.rquiz.includes(c.i))m.rquiz.push(c.i);if(b.type==='boss'){b.lives--;floatTxt('−1 Leben','r');snd('dmg');}else{gain(0,5);damage(15);}}
+ b.res[b.i]=c.res;save();if(M())render();}
+function spotAnswer(k){const b=M().b,c=cur();if(!c||c.ans!=null)return;const m=M();m.sT++;c.ans=k;const ok=k>=0&&c.opts[k].bad;
+ if(ok){m.sR++;m.dn++;c.res='dn';gain(20,15);snd('dn');}else{c.res='bad';damage(10);}b.res[b.i]=c.res;save();if(M())render();}
+function fcAnswer(knew){const b=M().b,c=cur();c.res=knew?'ok':'meh';if(knew){S.fc[c.id]=1;gain(10,10,tagsItem('w',c.id));}else{delete S.fc[c.id];gain(0,5);}b.res[b.i]=c.res;nextCreep();}
+function ancFull(c){return (c.chk||[]).filter(Boolean).length>=3||Math.max(wc(c.draft),wc((S.q[c.id]||{}).mine))>=40;}
+function midRate(r){const b=M().b,c=cur(),m=M();rateQ(c.id,r);m.rates[r]++;if(r!=='sitzt'&&!m.rq.includes(c.id))m.rq.push(c.id);
+ if(b.type==='mid'&&m.midRe[c.id]===1){m.midRe[c.id]=2;gain(REQ_BONUS,10);toast('Wiederholungs-Bonus: +'+REQ_BONUS+' Gold');}
+ else if(b.type==='mid'&&r!=='sitzt'&&!m.midRe[c.id]){m.midQ.splice(r==='neu'?2:4,0,c.id);m.midRe[c.id]=1;}
+ let eff=r;if(b.type==='ancient'&&r==='sitzt'&&!ancFull(c)){eff='wackelt';toast('Zählt im Ancient wie „wackelt“: Gerüst-Punkte abhaken oder ≥ 40 Wörter.');}
+ gain(MIDG[r][0],MIDG[r][1],tagsItem('q',c.id));c.res=eff;b.res[b.i]=eff;nextCreep();}
+function lesRate(good){const b=M().b,c=cur();const o=S.les[c.id]=S.les[c.id]||{};o.n=(o.n||0)+1;c.res=good?'ok':'meh';gain(good?25:5,good?30:10,tagsItem('l',c.id));b.res[b.i]=c.res;nextCreep();}
+function waveScore(b){const r=b.res;if(b.type==='top'){const q=b.creeps.map((c,i)=>c.k==='quiz'?r[i]:null).filter(x=>x!=null);return q.filter(x=>x==='lh'||x==='ok').length/q.length;}
+ if(b.type==='mid'||b.type==='ancient')return r.reduce((s,x)=>s+(x==='sitzt'?1:x==='wackelt'?.5:0),0)/r.length;
+ if(b.type==='bot')return r.filter(x=>x==='ok'||x==='dn').length/r.length;
+ return r.filter(x=>x==='dn').length/r.length;}
+function finishWave(){const m=M(),b=m.b;b.done=true;const sc=waveScore(b);b.score=sc;
+ if(LANES[b.type]){const L=LANES[b.type];if(S.towers[b.type]>=2)b.msg='Lane ist gepusht – beide Tower sind schon gefallen. Gold und XP gibt es trotzdem.';
+  else if(sc>=L.need){S.towers[b.type]++;m.towers++;b.tower=S.towers[b.type];gain(100,50);snd('tower');b.msg='Tower T'+S.towers[b.type]+' zerstört!';}
+  else b.msg='Der Tower hält – Genauigkeit '+Math.round(sc*100)+' %, nötig sind '+Math.round(L.need*100)+' %.';
+  m.hp=Math.min(100,m.hp+15);}
+ else if(b.type==='jungle'){b.msg='Jungle-Camp geräumt.';m.hp=Math.min(100,m.hp+10);}
+ else if(b.type==='boss'){if(b.lives>0){S.boss.wins++;S.shield=1;gain(150,150);snd('win');b.msg='Der Alte Rüster ist besiegt! Drop: Schild der Standardarbeit (ein Extra-Leben).';m.boss='sieg';}
+  else{b.msg='Der Alte Rüster war zu stark. Dein Schild-Bonus ist verbraucht – versuch es später nochmal.';m.boss='niederlage';}}
+ else if(b.type==='ancient'){const pts=Math.round(sc*ANC_N*2)/2;b.pts=pts;if(pts>=ANC_NEED){S.ancient.wins++;save();return endMatch('sieg');}else{save();return endMatch('ancient');}}
+ save();render();window.scrollTo(0,0);}
+function bossLivesCheck(){const b=M().b;if(b.type==='boss'&&b.lives<=0){b.done=true;finishWave();return true;}return false;}
+function ancientOpen(){return S.towers.mid>=2&&(S.towers.top+S.towers.mid+S.towers.bot)>=4;}
+function endMatch(res){const m=M();if(!m)return;const dur=Math.round((Date.now()-m.start)/1000);const tot=m.qT+m.sT,acc=tot?(m.qR+m.sR)/tot:null;
+ let d=0;if(res==='sieg')d=30;else if(res==='tot')d=-20;else if(res==='ancient')d=-10;else d=acc==null?0:clamp(Math.round((acc-.6)*50)+m.towers*3,-15,25);
+ const before=S.mmr;S.mmr=Math.max(0,S.mmr+d);
+ if(res==='sieg'){S.towers={top:0,mid:0,bot:0};S.season++;gain(300,200);snd('win');}
+ const anc=m.b&&m.b.type==='ancient'?m.b:null;
+ S.last={res,dur,hero:S.hero,lh:m.lh,dn:m.dn,acc,qR:m.qR,qT:m.qT,sR:m.sR,sT:m.sT,gold:m.gold,xp:m.xp,rates:m.rates,towers:m.towers,mmr:[before,S.mmr],rq:m.rq,rquiz:m.rquiz,boss:m.boss,ancPts:anc?anc.pts:null,lvl:levelInfo(S.xp).l,date:Date.now()};
+ S.hist.unshift({res,date:Date.now(),d});S.hist=S.hist.slice(0,10);S.life.matches++;S.life.lh+=m.lh;S.life.dn+=m.dn;S.match=null;tStop();save();go('#gg');}
+/* ===== Shop ===== */
+const ITEMS={hint:{n:'Hinweis',p:60,d:'Entfernt 2 falsche Antworten (Quiz-Creep oder Boss).',ic:'<svg class="ic" viewBox="0 0 40 40"><circle cx="20" cy="17" r="10" fill="#f0c868"/><rect x="15" y="28" width="10" height="6" rx="2" fill="#b9862a"/></svg>'},
+ boots:{n:'Zeitstiefel',p:50,d:'+30 Sekunden auf den laufenden Timer.',ic:'<svg class="ic" viewBox="0 0 40 40"><path d="M12 6h10v18l10 4v6H8V22z" fill="#8fb8f5"/><path d="M28 8l6 4-6 4" stroke="#fff" stroke-width="2" fill="none"/></svg>'},
+ second:{n:'Zweite Chance',p:80,d:'Aktivieren: Eine falsche Quiz-Antwort zählt nicht – du darfst nochmal.',ic:'<svg class="ic" viewBox="0 0 40 40"><path d="M20 6a14 14 0 1 1-13 9" stroke="#8fe08a" stroke-width="4" fill="none"/><path d="M4 8l4 8 8-4" fill="#8fe08a"/></svg>'},
+ scroll:{n:'Gerüst-Rolle',p:40,d:'Zeigt das Antwort-Gerüst schon vor dem Aufdecken (Mid / Ancient).',ic:'<svg class="ic" viewBox="0 0 40 40"><rect x="8" y="8" width="24" height="26" rx="3" fill="#e9dcc0"/><path d="M13 15h14M13 21h14M13 27h9" stroke="#7a5a12" stroke-width="2.5"/></svg>'}};
+function itemBtn(k,act,dis){const n=S.items[k]||0;return '<button class="item" data-act="'+act+'" data-it="'+k+'"'+(dis||!n?' disabled':'')+' title="'+esc(ITEMS[k].d)+'">'+ITEMS[k].n+' <span class="n">'+n+'</span></button>';}
+
+/* ===== HUD ===== */
+function hud(){const li=levelInfo(S.xp),m=M(),h=S.hero&&HM[S.hero];
+ let x='<div class="hudrow"><a class="brand" href="#menu">Lean Lanes</a>';
+ if(m){const t=Math.floor((Date.now()-m.start)/1000);x+=(h?portrait(h,'sm'):'')+'<div class="stat">HP <div class="bar hp'+(m.hp<35?' low':'')+'" id="hpbar" style="width:110px"><i style="width:'+m.hp+'%"></i></div><span>'+m.hp+'</span></div>'
+  +'<div class="stat">Gold <b id="hudGold">'+S.gold+'</b></div><div class="stat">Lvl '+li.l+' <div class="bar xp" style="width:70px"><i style="width:'+(li.rest/li.need*100)+'%"></i></div></div><div class="stat" id="mclock">'+Math.floor(t/60)+':'+String(t%60).padStart(2,'0')+'</div>';}
+ else x+='<div class="stat">Gold <b>'+S.gold+'</b></div><div class="stat">Lvl '+li.l+'</div><div class="stat">MMR '+S.mmr+' · '+rankOf(S.mmr)+'</div>';
+ x+='<span class="sp"></span><button class="iconbtn" data-act="sound" aria-label="Sound">'+(S.sound?'🔊 an':'🔈 aus')+'</button>';
+ if(m)x+='<button class="btn red sm" data-act="gg">GG</button>';
+ return x+'</div>';}
+
+/* ===== Seiten ===== */
+const V={};
+V.menu=()=>{const li=levelInfo(S.xp),all=QS.map(q=>q.id),c=stats(all),m=M();
+ return '<div class="panel" style="text-align:center;padding:26px 18px"><h3>Lernspiel im MOBA-Stil · Stelle Lean Consultant (intern)</h3><h1 style="font-size:2.3rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)">Lean Lanes</h1>'
+ +'<p>Drei Lanes, Creeps, Tower, ein Boss und das Ancient. Jede Creep ist eine Lernfrage. Die Mid-Lane mit den '+QS.length+' Gesprächsfragen ist die Hauptlane.</p>'
+ +'<div class="row" style="justify-content:center;margin-top:10px">'+(m?'<a class="btn gold big" href="#map">Match fortsetzen</a>':'<a class="btn gold big" href="#hero">Match starten</a>')+'<a class="btn big" href="#lib">Lernbibliothek</a></div><p class="hint" style="margin-top:10px">Ein Match dauert etwa 10–15 Minuten. Fortschritt bleibt im Browser gespeichert.</p></div>'
+ +'<div class="grid2"><div class="panel"><h3>Profil</h3><div class="row">'+(S.hero?portrait(HM[S.hero]):'')+'<div><div style="font-size:1.15rem;font-weight:750">'+rankOf(S.mmr)+' · '+S.mmr+' MMR</div><div class="hint">'+nextRank(S.mmr)+'</div></div></div>'
+ +'<p style="margin-top:12px">Level <b>'+li.l+'</b> / 25</p><div class="bar xp big"><i style="width:'+(li.l>=25?100:li.rest/li.need*100)+'%"></i></div><p class="hint">'+(li.l>=25?'Max-Level':li.rest+' / '+li.need+' XP bis Level '+(li.l+1))+'</p>'
+ +'<div class="row"><span class="chip">Streak: '+(S.streak.n||0)+' Tag'+(S.streak.n===1?'':'e')+'</span><span class="chip">Gold: '+S.gold+'</span><span class="chip">Matches: '+S.life.matches+'</span><span class="chip">Season '+S.season+'</span>'+(S.shield?'<span class="chip sitzt">Schild der Standardarbeit</span>':'')+'</div></div>'
+ +'<div class="panel"><h3>Mid-Lane · Gesprächsfragen</h3>'+pbar(all)+'<p class="hint">'+c.sitzt+' sitzt · '+c.wackelt+' wackelt · '+c.neu+' neu · '+c.offen+' offen</p>'
+ +GROUPS.map(([g,l])=>{const ids=QS.filter(q=>q.g===g).map(q=>q.id),s=stats(ids);return '<div class="gbar"><span>'+esc(l)+'</span>'+pbar(ids)+'<span class="hint">'+s.sitzt+'/'+ids.length+'</span></div>';}).join('')+'</div></div>'
+ +'<div class="row"><a class="btn" href="#lib">Lernbibliothek</a><a class="btn" href="#spick">Spickzettel (A4)</a><a class="btn" href="#shop">Shop</a><a class="btn" href="#daten">Export / Import / Reset</a>'+(S.last?'<a class="btn" href="#gg">Letztes Match</a>':'')+'</div>';};
+V.hero=()=>'<h1>Wähle deinen Helden</h1><p class="hint">Jeder Held bekommt +50 % Gold auf sein Spezialgebiet. Inhalte sind für alle gleich.</p><div class="grid4">'
+ +HEROES.map(h=>'<div class="heroCard'+(S.hero===h.id?' on':'')+'" data-act="pickHero" data-h="'+h.id+'">'+portrait(h)+'<div class="nm">'+esc(h.name)+'</div><div class="bonus">'+esc(h.bonus)+'</div><p class="hint">'+esc(h.txt)+'</p></div>').join('')+'</div>'
+ +'<div class="row" style="margin-top:16px"><button class="btn gold big" data-act="startMatch"'+(S.hero?'':' disabled')+'>'+(M()?'Weiter zur Map':'Match starten')+'</button><a class="btn" href="#menu">Zurück</a></div>';
+function twr(l,k){return S.towers[l]>=k?'down':'';}
+function mapSVG(){const T=(x,y,l,k)=>'<g transform="translate('+x+','+y+')"><rect x="-7" y="-9" width="14" height="18" rx="2" fill="'+(S.towers[l]>=k?'#444a58':'#d0503f')+'" stroke="#111"/><text y="22" font-size="9" fill="#9ba1ae" text-anchor="middle">T'+k+'</text></g>';
+ const op=ancientOpen();
+ return '<svg class="map" viewBox="0 0 300 300" role="img" aria-label="Map mit drei Lanes"><rect width="300" height="300" rx="14" fill="#16241b"/><path d="M0 0L300 300" stroke="#1d3b4d" stroke-width="26"/>'
+ +'<g class="lane" data-act="lane" data-l="top"><path d="M38 262V38H262" stroke="#6b5a3a" stroke-width="16" fill="none" stroke-linecap="round"/></g>'
+ +'<g class="lane" data-act="lane" data-l="mid"><path d="M45 255L255 45" stroke="#8a7348" stroke-width="20" fill="none" stroke-linecap="round"/></g>'
+ +'<g class="lane" data-act="lane" data-l="bot"><path d="M38 262H262V38" stroke="#6b5a3a" stroke-width="16" fill="none" stroke-linecap="round"/></g>'
+ +T(120,38,'top',1)+T(200,38,'top',2)+T(165,135,'mid',1)+T(212,88,'mid',2)+T(262,180,'bot',1)+T(262,100,'bot',2)
+ +'<g data-act="go" data-to="jungle" style="cursor:pointer"><circle cx="205" cy="225" r="13" fill="#2d4a2a" stroke="#5fb35a"/><text x="205" y="229" font-size="10" fill="#cfe9c9" text-anchor="middle">J</text></g>'
+ +'<g data-act="go" data-to="boss" style="cursor:pointer"><circle cx="95" cy="95" r="15" fill="#3b2450" stroke="#b26be0"/><text x="95" y="99" font-size="10" fill="#e6d0f7" text-anchor="middle">Boss</text></g>'
+ +'<g data-act="go" data-to="ancient" style="cursor:pointer"><circle cx="262" cy="38" r="17" fill="'+(op?'#d0503f':'#4a2a26')+'" stroke="#ffb07a"/><text x="262" y="42" font-size="9" fill="#fff" text-anchor="middle">Ancient</text></g>'
+ +'<circle cx="38" cy="262" r="17" fill="#2c5b34" stroke="#8fe08a"/><text x="38" y="266" font-size="9" fill="#fff" text-anchor="middle">Basis</text></svg>';}
+V.map=()=>{const m=M();if(!m)return V.menu();const op=ancientOpen(),tot=S.towers.top+S.towers.mid+S.towers.bot,t=Math.floor((Date.now()-m.start)/60000);
+ const lb=l=>'<button class="lanebtn" data-act="lane" data-l="'+l+'"><span><span class="tw '+twr(l,1)+'"></span><span class="tw '+twr(l,2)+'"></span></span><span><span class="t">'+LANES[l].n+'</span><br><span class="hint">'+LANES[l].s+' · Tower fällt ab '+Math.round(LANES[l].need*100)+' % Genauigkeit</span></span></button>';
+ return '<div class="grid2"><div class="panel">'+mapSVG()+'<p class="hint" style="text-align:center">Tower: '+tot+' / 6 zerstört · Season '+S.season+'</p></div><div><div class="panel"><h3>Lanes</h3>'+lb('mid')+lb('top')+lb('bot')
+ +'<button class="lanebtn" data-act="go" data-to="jungle"><span class="t">Jungle · Finde die Kill-Phrase</span><span class="hint">&nbsp;5 schnelle Runden, je 10 s</span></button>'
+ +'<button class="lanebtn" data-act="go" data-to="boss"><span><span class="t">Boss · Der Alte Rüster</span><br><span class="hint">10 gemischte Quizfragen, 3 Leben'+(S.shield?' (+1 durch Schild)':'')+' · Drop: Schild der Standardarbeit</span></span></button>'
+ +'<button class="lanebtn" data-act="go" data-to="ancient"'+(op?'':' disabled')+'><span><span class="t">Ancient · Prüfung</span><br><span class="hint">'+(op?'5 Gesprächsfragen am Stück (Motivation, Praxisbeispiel, Widerstand, Schwäche + 1 Zufall), kein Überspringen. Ab 3 von 5 Punkten fällt das Ancient.':'Gesperrt: beide Mid-Tower + insgesamt 4 Tower zerstören ('+tot+'/4, Mid '+S.towers.mid+'/2).')+'</span></span></button></div>'
+ +'<div class="row"><a class="btn" href="#shop">Shop ('+S.gold+' Gold)</a><button class="btn red" data-act="gg">GG – Match beenden</button></div>'+(t>=15?'<p class="hint">Du spielst seit '+t+' min – guter Moment für GG.</p>':'')+'</div></div>';};
+V.shop=()=>'<h1>Shop</h1><p class="hint">Gold: <b style="color:var(--gold)">'+S.gold+'</b> · Items gelten in allen Matches.</p>'
+ +Object.entries(ITEMS).map(([k,it])=>'<div class="shopItem">'+it.ic+'<div style="flex:1"><b>'+it.n+'</b> <span class="chip">'+(S.items[k]||0)+' im Inventar</span><br><span class="hint">'+esc(it.d)+'</span></div><button class="btn gold" data-act="buy" data-it="'+k+'"'+(S.gold<it.p?' disabled':'')+'>'+it.p+' Gold</button></div>').join('')
+ +'<div class="row"><a class="btn" href="'+(M()?'#map':'#menu')+'">Zurück</a></div>';
+
+/* Battle */
+function tgtBar(b){const r=b.res.filter(x=>x!=null);
+ if(b.type==='boss'){const left=b.creeps.length-b.res.filter(x=>x!=null).length;return '<div class="row">'+BOSS_SVG.replace('CLS',b.done?'dead':'')+'<div style="flex:1"><b>Der Alte Rüster</b> <span class="chip neu">Leben: '+'♥'.repeat(Math.max(0,b.lives))+'</span><div class="bar boss big"><i style="width:'+(left/b.creeps.length*100)+'%"></i></div></div></div>';}
+ if(b.type==='ancient'){const p=b.res.reduce((s,x)=>s+(x==='sitzt'?1:x==='wackelt'?.5:0),0);return '<div class="row">'+ANC_SVG.replace('CLS','')+'<div style="flex:1"><b>Ancient · Prüfung</b> <span class="hint">Punkte '+p+' / '+ANC_N+' (nötig: '+ANC_NEED+') · kein Überspringen</span><div class="bar tw big"><i style="width:'+Math.max(0,100-p/ANC_NEED*100)+'%"></i></div></div></div>';}
+ if(LANES[b.type]){const k=S.towers[b.type];const need=Math.ceil(LANES[b.type].need*(b.type==='top'?4:b.creeps.length));const hits=b.type==='mid'?b.res.reduce((s,x)=>s+(x==='sitzt'?1:x==='wackelt'?.5:0),0):r.filter(x=>x==='lh'||x==='ok'||x==='dn').length;
+  return '<div class="row">'+TOWER_SVG.replace('CLS',b.tower?'dead':'')+'<div style="flex:1"><b>'+(k>=2&&!b.tower?'Lane gepusht':'Tower T'+Math.min(2,k+(b.tower?0:1)))+'</b> <span class="hint">'+LANES[b.type].n+'</span><div class="bar tw big"><i style="width:'+(b.tower?0:Math.max(0,100-hits/need*100))+'%"></i></div></div></div>';}
+ return '<div><b>Jungle-Camp</b> <span class="hint">Finde die Kill-Phrase – Deny sie!</span></div>';}
+function dots(b){return '<div class="creeps" style="margin-top:8px">'+b.creeps.map((c,i)=>{const r=b.res[i];return '<span class="cdot '+(i===b.i&&!b.done?'cur':r==null?'':(r==='bad'||r==='neu'||r==='meh')?'bad':'ok')+'">'+(r==='lh'?'★':r==='dn'?'D':'')+'</span>';}).join('')+'</div>';}
+function timerBar(c,max){const p=clamp(c.left/max*100,0,100);return '<div class="row"><span class="hint" id="tleft">'+Math.max(0,c.left)+' s</span><span class="sp"></span>'+(c.k==='quiz'?'<span class="hint">Last Hit: richtig in ≤ '+LH_T+' s</span>':'')+'</div><div class="tbar'+(c.left<=5?' low':'')+'" id="tbar"><i id="tfill" style="width:'+p+'%"></i></div>';}
+function cdRing(c){const p=clamp(c.left/MID_T*100,0,100);return '<div class="cd" id="cd" style="background:conic-gradient(var(--gold) '+p+'%,#2a2f3c 0)"><span id="cdt">'+(c.left>0?c.left:'✓')+'</span></div>';}
+V.battle=()=>{const m=M();if(!m||!m.b)return V.map();const b=m.b,typeN={top:'Top-Lane',mid:'Mid-Lane',bot:'Bot-Lane',jungle:'Jungle',boss:'Boss',ancient:'Ancient'}[b.type];
+ let h='<div class="panel"><div class="row"><h3 style="margin:0">'+typeN+' · Creep '+Math.min(b.i+1,b.creeps.length)+' / '+b.creeps.length+'</h3><span class="sp"></span>'+(b.type!=='ancient'&&!b.done?'<button class="btn sm" data-act="leaveWave">Rückzug zur Map</button>':'')+'</div>'+tgtBar(b)+dots(b)+'</div>';
+ if(b.done)return h+'<div class="panel" style="text-align:center"><div class="banner '+(b.tower||(b.type==='boss'&&b.lives>0)?'lh':'miss')+'">'+esc(b.tower?'Tower zerstört!':b.type==='boss'?(b.lives>0?'Boss besiegt!':'Rückzug'):'Welle geschafft')+'</div><p style="font-size:1.1rem">'+esc(b.msg)+'</p><p class="hint">Genauigkeit dieser Welle: '+Math.round(b.score*100)+' %</p><div class="row" style="justify-content:center">'+(LANES[b.type]||b.type==='jungle'?'<button class="btn gold" data-act="again">Nächste Welle</button>':'')+'<a class="btn" href="#map">Zur Map</a></div></div>';
+ const c=b.creeps[b.i];
+ if(c.k==='quiz'){const it=QUIZ[c.i];const done=c.ans!=null;
+  h+='<div class="panel"><div class="row">'+CREEP_SVG.replace('CLS',done?(c.res==='bad'?'hit':'dead'):'')+'<div style="flex:1"><div class="bar hp"><i style="width:'+(done&&c.res!=='bad'?0:100)+'%"></i></div>'+(!done?timerBar(c,c.max||QUIZ_T):'')+'</div></div>'
+  +'<div class="qbig">'+esc(it[0])+'</div>';
+  if(!done)h+='<div class="items">'+itemBtn('hint','useHint',c.hidden)+itemBtn('boots','useBoots')+itemBtn('second','useSecond',c.second||c.usedSecond)+'</div>'+(c.second?'<p class="hint">Zweite Chance aktiv.</p>':'');
+  h+=c.order.map((oi,k)=>{let cl='opt';if(done){if(oi===it[2])cl+=' right';else if(k===c.ans)cl+=' wrong';}else if((c.tried||[]).includes(k))cl+=' wrong';if(!done&&(c.hidden||[]).includes(k))cl+=' gone';return '<button class="'+cl+'" data-act="qa" data-k="'+k+'"'+(done||(c.hidden||[]).includes(k)||(c.tried||[]).includes(k)?' disabled':'')+'>'+esc(it[1][oi])+'</button>';}).join('');
+  if(done)h+='<div class="banner '+(c.res==='lh'?'lh':c.res==='ok'?'ok':'miss')+'">'+(c.res==='lh'?'Last Hit!':c.res==='ok'?'Treffer':c.ans<0?'Zeit abgelaufen':'Daneben')+'</div><div class="fbbox '+(c.res==='bad'?'bad':'ok')+'">'+fmt(it[3])+'</div><div class="row"><span class="sp"></span><button class="btn gold" data-act="next">Weiter →</button></div>';
+  return h+'</div>';}
+ if(c.k==='fc'){const w=WISSEN.find(x=>x.id===c.id);
+  return h+'<div class="panel"><div class="row">'+CREEP_SVG.replace('CLS','')+'<div><b>Karteikarten-Creep</b><br><span class="hint">Erst selbst erklären, dann umdrehen.</span></div></div><div class="read flip'+(c.flip?' back':'')+'" data-act="flip" id="flipcard" style="margin-top:10px">'+(c.flip?'<div><h3>'+esc(w.t)+'</h3><p>'+fmt(w.def)+'</p><p><b>Im Gespräch:</b> '+fmt(w.say)+'</p><p class="hint">Falle: '+fmt(w.falle)+'</p></div>':'<div>'+esc(w.t)+'<div class="hint" style="font-weight:400;margin-top:10px">Was ist das – in einem Satz? Tippen zum Umdrehen.</div></div>')+'</div>'
+  +(c.flip?'<div class="row" style="margin-top:12px"><button class="btn" data-act="fc" data-v="0">Noch nicht</button><span class="sp"></span><button class="btn gold" data-act="fc" data-v="1">Gewusst (+10 Gold)</button></div>':'')+'</div>';}
+ if(c.k==='q'){const q=QM[c.id];
+  h+='<div class="panel"><div class="row">'+CREEP_SVG.replace('CLS','')+'<div style="flex:1"><span class="chip grp">'+esc(GL[q.g])+'</span> '+chip(rateOf(q.id))+'<p class="hint" style="margin:.3em 0 0">Antwort laut sprechen oder tippen · 60–90 s · drei Schritte</p></div>'+cdRing(c)+'</div><div class="qbig" style="font-size:1.6rem">'+esc(q.q)+'</div>';
+  if(!c.rev){h+='<div class="items">'+itemBtn('boots','useBoots')+itemBtn('scroll','useScroll',c.scroll)+'</div>'+(c.scroll?'<div class="read" style="margin-top:10px">'+secGer(q)+'</div>':'')
+   +'<textarea id="draft" rows="5" style="margin-top:10px" placeholder="Optional: Stichworte oder ganze Antwort tippen …">'+esc(c.draft||'')+'</textarea><div class="row" style="margin-top:12px"><button class="btn gold big" data-act="reveal">Musterantwort zeigen</button><span class="hint">Erst ganz antworten, dann aufdecken.</span></div></div>';return h;}
+  h+=(c.draft?'<div class="fbbox"><b>Dein Entwurf:</b> '+esc(c.draft)+' <button class="btn sm" data-act="draftToMine">als „Meine Antwort“ speichern</button></div>':'')+fullCard(q)
+   +(b.type==='ancient'?'<div class="fbbox"><b>Gerüst-Check</b> – abhaken, was deine Antwort wirklich hatte:'+q.ger.map((g,n)=>'<label style="display:block;margin:6px 0;cursor:pointer"><input type="checkbox" data-act="gchk" data-n="'+n+'"'+((c.chk||[])[n]?' checked':'')+'> '+fmt(g)+'</label>').join('')+'<p class="hint" style="margin:4px 0 0">Im Ancient zählt „sitzt“ nur voll, wenn alle 3 Gerüst-Punkte abgehakt sind oder deine Antwort (Entwurf oder „Meine Antwort“) mindestens 40 Wörter hat – sonst zählt es wie „wackelt“.</p></div>':'')+'<h3 style="margin-top:14px">Selbst bewerten – jede ehrliche Bewertung bringt gleich viel Gold</h3>'+rateBtns('rate',[MIDG.sitzt[0],MIDG.wackelt[0],MIDG.neu[0]])+'<p class="hint">„wackelt“ kommt im Match nach ca. 5 Mid-Creeps wieder, „neu“ nach ca. 3. Wer sie dann beantwortet, bekommt +'+REQ_BONUS+' Gold Wiederholungs-Bonus.</p></div>';return h;}
+ if(c.k==='les'){const l=LESSONS.find(x=>x.id===c.id);
+  h+='<div class="panel"><div class="row">'+CREEP_SVG.replace('CLS','')+'<div><b>Lektions-Creep</b><br><span class="hint">Consultant-Denken</span></div></div><div class="read" style="margin-top:10px"><h2>'+esc(l.t)+'</h2><p>'+esc(l.txt)+'</p><div class="lbl">Formuliere um</div><div class="fbbox bad">„'+esc(l.bad)+'“</div></div>'
+   +'<textarea id="lesTxt" rows="3" style="margin-top:10px" placeholder="Deine Version …">'+esc(c.txt||'')+'</textarea>';
+  if(!c.checked)return h+'<div class="row" style="margin-top:10px"><button class="btn gold" data-act="lesCheck">Prüfen &amp; Lösung zeigen</button></div></div>';
+  return h+'<div class="read" style="margin-top:10px"><b>Checkliste</b> (einfache Wortprüfung)<ul>'+l.check.map(([re,lab])=>'<li>'+((c.txt||'').trim()&&re.test(c.txt)?'✓ ':'✗ ')+esc(lab)+'</li>').join('')+'</ul><div class="fbbox ok"><b>Musterlösung:</b> '+esc(l.sol)+'</div></div><div class="row" style="margin-top:12px"><button class="btn" data-act="les" data-v="0">Nochmal üben (+5)</button><span class="sp"></span><button class="btn gold" data-act="les" data-v="1">Gut umformuliert (+25)</button></div></div>';}
+ if(c.k==='spot'){const done=c.ans!=null,K=KILLS[c.ki];
+  h+='<div class="panel"><div class="row">'+CREEP_SVG.replace('CLS',done?(c.res==='dn'?'dead':'hit'):'')+'<div style="flex:1"><b>Welcher Satz ist die Kill-Phrase?</b> <span class="hint">Deny sie, bevor sie im Gespräch fällt.</span>'+(!done?timerBar(c,c.max||(b.type==='jungle'?JUNGLE_T:SPOT_T)):'')+'</div></div>'
+   +(!done?'<div class="items">'+itemBtn('boots','useBoots')+'</div>':'')
+   +c.opts.map((o,k)=>{let cl='spot';if(done){if(o.bad)cl+=' right';else if(k===c.ans)cl+=' wrong';}return '<button class="'+cl+'" data-act="spot" data-k="'+k+'"'+(done?' disabled':'')+'>„'+esc(o.t)+'“</button>';}).join('');
+  if(done)h+='<div class="banner '+(c.res==='dn'?'dn':'miss')+'">'+(c.res==='dn'?'Denied!':c.ans<0?'Zu langsam':'Daneben')+'</div><div class="read"><span class="badge bad">'+esc(K.k)+'</span> '+esc(K.why)+'<br><b>Besser:</b> '+fmt(K.repl)+'</div><div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn gold" data-act="next">Weiter →</button></div>';
+  return h+'</div>';}
+ return h;};
+
+/* GG */
+V.gg=()=>{const L=S.last;if(!L)return V.menu();const T={sieg:['Sieg!','Das Ancient ist gefallen – neue Season, alle Tower stehen wieder.'],tot:['Niederlage','Dein Held ist gefallen. Lies die Erklärungen und versuch es nochmal.'],ancient:['Das Ancient hält','Prüfung mit '+L.ancPts+' / '+ANC_N+' Punkten – nötig sind '+ANC_NEED+'. Die Tower bleiben zerstört.'],gg:['GG','Match beendet.']}[L.res];
+ const st=(v,l)=>'<div class="ggStat"><div class="v">'+v+'</div><div class="l">'+l+'</div></div>';const mm=L.mmr[1]-L.mmr[0];
+ return '<div class="panel" style="text-align:center"><div class="banner '+(L.res==='sieg'?'lh':L.res==='gg'?'ok':'miss')+'" style="font-size:2.6rem">GG</div><h1>'+T[0]+'</h1><p>'+esc(T[1])+'</p><p class="hint">'+(L.hero?esc(HM[L.hero].name)+' · ':'')+Math.floor(L.dur/60)+':'+String(L.dur%60).padStart(2,'0')+' min · Level '+L.lvl+' · '+rankOf(L.mmr[1])+'</p></div>'
+ +'<div class="grid4">'+st(L.lh,'Last Hits')+st(L.dn,'Denies')+st(L.acc==null?'–':Math.round(L.acc*100)+' %','Genauigkeit')+st('+'+L.gold,'Gold')+st('+'+L.xp,'XP')+st(L.towers,'Tower')+st((mm>=0?'+':'')+mm,'MMR ('+L.mmr[1]+')')+st(L.boss?L.boss==='sieg'?'besiegt':'verloren':'–','Boss')+'</div>'
+ +'<div class="panel" style="margin-top:14px"><h3>Selbstbewertung Gesprächsfragen</h3><p><span class="chip sitzt">'+L.rates.sitzt+' sitzt</span> <span class="chip wackelt">'+L.rates.wackelt+' wackelt</span> <span class="chip neu">'+L.rates.neu+' neu</span> · Quiz '+L.qR+'/'+L.qT+' · Kill-Phrasen '+L.sR+'/'+L.sT+'</p>'
+ +'<h3 style="margin-top:12px">Nochmal anschauen</h3>'+(L.rq.length||L.rquiz.length?'<ul>'+L.rq.map(id=>'<li><a href="#lib/q/'+id+'">'+esc(QM[id].q)+'</a> '+chip(rateOf(id))+'</li>').join('')+L.rquiz.map(i=>'<li>'+esc(QUIZ[i][0])+' → <b>'+esc(QUIZ[i][1][QUIZ[i][2]])+'</b></li>').join('')+'</ul>':'<p class="hint">Nichts offen – stark.</p>')+'</div>'
+ +'<div class="row"><a class="btn gold big" href="#hero">Neues Match</a><a class="btn" href="#menu">Menü</a><a class="btn" href="#lib">Lernbibliothek</a></div>';};
+/* ===== Lernbibliothek (ohne Spielen) ===== */
+let libShown={},LF=null;
+function libTabs(on){return '<div class="tabs">'+[['','Gesprächsfragen'],['wissen','Lean-Wissen'],['quiz','Quiz-Fragen'],['karten','Karteikarten'],['denken','Consultant-Denken']].map(([k,l])=>'<a href="#lib'+(k?'/'+k:'')+'" class="'+(on===k?'on':'')+'">'+l+'</a>').join('')+'</div>';}
+V.lib=(sub,id)=>{
+ if(sub==='q'&&QM[id]){const q=QM[id],ids=QS.filter(x=>S.libFilter==='all'||x.g===S.libFilter).map(x=>x.id),i=ids.indexOf(id),nx=i>=0&&i<ids.length-1?ids[i+1]:null,pv=i>0?ids[i-1]:null;
+  return '<h1>Lernbibliothek</h1>'+libTabs('')+'<div class="panel"><div class="row"><span class="chip grp">'+esc(GL[q.g])+'</span>'+chip(rateOf(id))+'<span class="sp"></span><a href="#lib">← Liste</a></div><div class="qbig">'+esc(q.q)+'</div>'
+  +(libShown[id]?fullCard(q):'<div class="read">'+secPruef(q)+secGer(q)+'<div class="sec" style="text-align:center"><button class="btn gold" data-act="libReveal" data-id="'+id+'">Musterantwort zeigen</button><p class="hint">Erst selbst antworten – dann vergleichen.</p></div>'+secFalle(q)+secNach(q)+'</div>')
+  +'<h3 style="margin-top:14px">Wie sicher sitzt die Antwort?</h3>'+rateBtns('libRate')+'</div><div class="row">'+(pv?'<a class="btn" href="#lib/q/'+pv+'">← Vorige</a>':'')+'<span class="sp"></span>'+(nx?'<a class="btn gold" href="#lib/q/'+nx+'">Nächste →</a>':'')+'</div>';}
+ if(sub==='wissen')return '<h1>Lernbibliothek</h1>'+libTabs('wissen')+WISSEN.map(w=>'<details class="wk"><summary>'+esc(w.t)+'</summary><div class="lbl">In einem Satz</div><p>'+fmt(w.def)+'</p><div class="lbl">Beispiel aus deinem Rüsten</div><p>'+fmt(w.bsp)+'</p><div class="lbl">So sagst du es im Gespräch</div><p><b>'+fmt(w.say)+'</b></p><div class="lbl">Typische Falle</div><p>'+fmt(w.falle)+'</p></details>').join('');
+ if(sub==='quiz')return '<h1>Lernbibliothek</h1>'+libTabs('quiz')+'<p class="hint">Alle '+QUIZ.length+' Quizfragen mit Lösung – zum Nachlesen.</p>'+QUIZ.map((it,i)=>'<details class="wk"><summary>'+(i+1)+'. '+esc(it[0])+'</summary><p><b>'+esc(it[1][it[2]])+'</b></p><p>'+fmt(it[3])+'</p></details>').join('');
+ if(sub==='karten'){if(!LF)LF={cards:shuffle([...WISSEN.map(w=>({id:w.id,f:w.t,b:'<p>'+fmt(w.def)+'</p><p><b>Im Gespräch:</b> '+fmt(w.say)+'</p>'})),...QS.map(q=>({id:'k_'+q.id,f:q.q,b:'<p><b>Kern:</b> '+fmt(q.kern)+'</p>'}))]),i:0,flip:false};
+  if(LF.i>=LF.cards.length)return '<h1>Lernbibliothek</h1>'+libTabs('karten')+'<div class="panel"><h2>Stapel durch</h2><p>'+LF.cards.filter(c=>S.fc[c.id]).length+' von '+LF.cards.length+' gewusst.</p><button class="btn gold" data-act="lfNew">Neu mischen</button></div>';
+  const c=LF.cards[LF.i];return '<h1>Lernbibliothek</h1>'+libTabs('karten')+'<p class="hint">Karte '+(LF.i+1)+' / '+LF.cards.length+'</p><div class="read flip'+(LF.flip?' back':'')+'" data-act="lflip" id="lflip">'+(LF.flip?'<div><div class="hint">'+esc(c.f)+'</div>'+c.b+'</div>':'<div>'+esc(c.f)+'</div>')+'</div><div class="row" style="margin-top:12px"><button class="btn" data-act="lfPrev"'+(LF.i?'':' disabled')+'>← Zurück</button><span class="sp"></span>'+(LF.flip?'<button class="btn" data-act="lfAgain">Nochmal</button><button class="btn gold" data-act="lfKnow">Gewusst</button>':'<button class="btn gold" data-act="lflip">Umdrehen</button>')+'</div>';}
+ if(sub==='denken')return '<h1>Lernbibliothek</h1>'+libTabs('denken')+LESSONS.map((l,n)=>'<div class="panel"><h3>Lektion '+(n+1)+'</h3><h2>'+esc(l.t)+'</h2><div class="read"><p>'+esc(l.txt)+'</p><div class="lbl">Übung – formuliere um</div><div class="fbbox bad">„'+esc(l.bad)+'“</div></div><textarea data-les="'+l.id+'" rows="3" style="margin-top:8px" placeholder="Deine Version …">'+esc((S.les[l.id]||{}).txt||'')+'</textarea><div class="row" style="margin-top:8px"><button class="btn" data-act="lesLib" data-id="'+l.id+'">Prüfen &amp; Lösung zeigen</button></div><div id="les_'+l.id+'"></div></div>').join('')
+  +'<div class="panel"><h2>Kill-Phrasen – und was du stattdessen sagst</h2><div class="read">'+KILLS.map(k=>'<div class="sec"><span class="badge bad">'+esc(k.k)+'</span> <span class="hint">'+esc(k.why)+'</span><br><b>Besser:</b> '+fmt(k.repl)+'</div>').join('')+'</div></div>'
+  +'<div class="panel"><h2>Text-Check</h2><p class="hint">Antwort einfügen – einfache Wortsuche nach Kill-Phrasen, kein KI-Urteil.</p><textarea id="killText" rows="6">'+esc(S.kill)+'</textarea><div class="row" style="margin-top:8px"><button class="btn gold" data-act="killRun">Text prüfen</button></div><div id="killOut" class="read" style="margin-top:10px;padding:8px 12px"></div></div>';
+ const ids=QS.filter(q=>S.libFilter==='all'||q.g===S.libFilter).map(q=>q.id);
+ return '<h1>Lernbibliothek</h1><p class="hint">Alle Inhalte ohne Spielen durchblättern.</p>'+libTabs('')
+ +'<div class="tabs"><button data-act="libFilter" data-g="all" class="'+(S.libFilter==='all'?'on':'')+'">Alle ('+QS.length+')</button>'+GROUPS.map(([g,l])=>'<button data-act="libFilter" data-g="'+g+'" class="'+(S.libFilter===g?'on':'')+'">'+esc(l)+'</button>').join('')+'</div>'
+ +ids.map(id=>'<a class="qrow" href="#lib/q/'+id+'"><span class="qt">'+esc(QM[id].q)+'<br><span class="chip grp">'+esc(GL[QM[id].g])+'</span></span>'+chip(rateOf(id))+'</a>').join('');};
+
+/* Spickzettel */
+function spickHTML(){const top=QS.filter(q=>q.top);
+ return '<div class="spick"><div class="shead"><b>Spickzettel · Lean Consultant (intern)</b><span>Stand '+new Date().toLocaleDateString('de-DE')+'</span></div><div class="scols"><div><h5>Top 10 Fragen – Kern in einer Zeile</h5><ol>'+top.map(q=>'<li><b>'+esc(q.q)+'</b><br>'+fmt(q.kern)+'</li>').join('')+'</ol></div>'
+ +'<div><h5>3 Zahlen / Fakten</h5><ol>'+FAKTEN.map(f=>'<li>'+fmt(f)+'</li>').join('')+'</ol><h5>5 Rückfragen <span style="text-transform:none;font-weight:400">(Anrede wie bei euch üblich)</span></h5><ol>'+RUECK.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ol>'
+ +'<h5>Kill-Phrasen → besser</h5><ul>'+KILLS.map(k=>'<li><b>'+esc(k.k)+'</b> → '+fmt(k.repl.replace(/^Nimm deine echte Schwäche: /,''))+'</li>').join('')+'</ul>'
+ +'<h5>Mein Satz für Skeptiker</h5><p style="margin:0">„Jeder Defekt oder jede Verbesserung, die wir beim Rüsten finden, bringt uns einen Schritt näher an eine störungsfreie Maschine.“</p></div></div></div>';}
+function fillPrint(){$('#printArea').innerHTML=spickHTML();}
+V.spick=()=>'<div class="row" style="margin-bottom:12px"><h1 style="margin:0">Spickzettel</h1><span class="sp"></span><button class="btn gold" data-act="print">Drucken (1 Seite A4)</button></div><div class="read">'+spickHTML()+'</div><p class="hint">Stellen mit <span class="gap">✎ Deine Erfahrung</span> vor dem Gespräch mit eigenen Beispielen füllen.</p>';
+V.daten=()=>'<h1>Daten</h1><div class="panel"><p>Alles bleibt lokal in diesem Browser (localStorage „'+KEY+'“). Für ein anderes Gerät: exportieren und dort importieren.</p><div class="row"><button class="btn gold" data-act="export">Export (JSON)</button><button class="btn" data-act="import">Import (JSON)</button><span class="sp"></span><button class="btn red" data-act="reset">Alles zurücksetzen</button></div></div>';
+function doExport(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='leandota_'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);toast('Export erstellt');}
+function doImport(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d||d.v!==1||typeof d.q!=='object')throw 0;localStorage.setItem(KEY,JSON.stringify(d));S=load();toast('Import erfolgreich');render();}catch(e){toast('Import fehlgeschlagen – keine gültige Datei');}};r.readAsText(file);}
+
+/* ===== Router & Timer ===== */
+function go(h){if(location.hash!==h)history.pushState(null,'',h);render();window.scrollTo(0,0);}
+window.addEventListener('popstate',()=>render());
+function render(){const p=(location.hash||'#menu').slice(1).split('/');let r=p[0]||'menu';if(!V[r])r='menu';
+ if((r==='map'||r==='battle')&&!M())r='menu';if(r==='battle'&&!M().b)r='map';
+ $('#hud').innerHTML=hud();$('#main').innerHTML=V[r](p[1],p[2]);}
+let TI=null;function tStop(){}
+function tick(){const m=M();if(!m)return;const ck=$('#mclock');if(ck){const t=Math.floor((Date.now()-m.start)/1000);ck.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');}
+ if(location.hash!=='#battle'||document.hidden)return;const c=cur();if(!c||c.left==null||c.ans!=null||c.rev)return;if(c.k==='q'&&c.left<=0)return;
+ c.left--;const base=c.k==='quiz'?QUIZ_T:c.k==='spot'?(m.b.type==='jungle'?JUNGLE_T:SPOT_T):MID_T,max=c.max||base;
+ const tl=$('#tleft'),tf=$('#tfill'),tb=$('#tbar'),cd=$('#cd'),cdt=$('#cdt');if(tl)tl.textContent=Math.max(0,c.left)+' s';if(tf)tf.style.width=clamp(c.left/max*100,0,100)+'%';if(tb)tb.classList.toggle('low',c.left<=5);
+ if(cd){cd.style.background='conic-gradient(var(--gold) '+clamp(c.left/max*100,0,100)+'%,#2a2f3c 0)';cdt.textContent=c.left>0?c.left:'✓';}
+ if(c.left<=0){if(c.k==='quiz')quizAnswer(-1);else if(c.k==='spot')spotAnswer(-1);else{toast('90 Sekunden um – jetzt Musterantwort vergleichen');snd('hit');}}
+ else saveSoon();}
+TI=setInterval(tick,1000);
+window.addEventListener('hashchange',()=>{render();window.scrollTo(0,0);});
+
+/* ===== Events ===== */
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(!el)return;const a=el.dataset.act,d=el.dataset,m=M(),c=cur();
+ switch(a){
+ case 'sound':S.sound=!S.sound;save();if(S.sound)snd('gold');render();break;
+ case 'gg':if(m&&confirm('Match beenden (GG)?'))endMatch('gg');break;
+ case 'pickHero':S.hero=d.h;save();render();break;
+ case 'startMatch':if(!S.hero)break;if(!M())startMatch();go('#map');break;
+ case 'lane':if(m&&m.b&&!m.b.done&&m.b.type===d.l)go('#battle');else startBattle(d.l);break;
+ case 'go':if(d.to==='ancient'&&!ancientOpen()){toast('Ancient gesperrt: erst beide Mid-Tower und insgesamt 4 Tower zerstören.');break;}if(m&&m.b&&!m.b.done&&m.b.type===d.to)go('#battle');else startBattle(d.to);break;
+ case 'again':startBattle(m.b.type);break;
+ case 'leaveWave':if(confirm('Rückzug? Diese Welle zählt dann nicht.')){m.b=null;save();go('#map');}break;
+ case 'qa':quizAnswer(+d.k);break;
+ case 'next':if(bossLivesCheck())break;nextCreep();break;
+ case 'useHint':{if(!c||c.k!=='quiz'||!S.items.hint)break;const it=QUIZ[c.i];const wr=c.order.map((oi,k)=>({oi,k})).filter(x=>x.oi!==it[2]&&!(c.tried||[]).includes(x.k)).map(x=>x.k);c.hidden=shuffle(wr).slice(0,2);S.items.hint--;save();render();break;}
+ case 'useBoots':if(!c||!S.items.boots)break;{const base=c.k==='quiz'?QUIZ_T:c.k==='spot'?(m.b.type==='jungle'?JUNGLE_T:SPOT_T):MID_T;c.left=Math.max(0,c.left)+30;c.max=Math.max(c.max||base,c.left);c.t0=(c.t0||Date.now());S.items.boots--;floatTxt('+30 s','x');save();render();}break;
+ case 'useSecond':if(!c||!S.items.second)break;c.second=true;c.usedSecond=true;S.items.second--;save();render();break;
+ case 'useScroll':if(!c||!S.items.scroll)break;c.scroll=true;S.items.scroll--;save();render();break;
+ case 'reveal':c.draft=($('#draft')||{}).value||c.draft||'';c.rev=true;save();render();break;
+ case 'rate':midRate(d.r);break;
+ case 'gchk':{if(!c)break;c.chk=c.chk||[false,false,false];c.chk[+d.n]=el.checked;save();break;}
+ case 'gchk':{if(!c)break;c.chk=c.chk||[false,false,false];c.chk[+d.n]=el.checked;save();break;}
+ case 'draftToMine':{const o=qs(c.id);o.mine=c.draft;save();const mi=$('#mine');if(mi)mi.value=c.draft;toast('Als „Meine Antwort“ gespeichert');break;}
+ case 'flip':if(c&&c.k==='fc'&&!c.flip){c.flip=true;save();render();}break;
+ case 'fc':fcAnswer(d.v==='1');break;
+ case 'lesCheck':c.txt=($('#lesTxt')||{}).value||'';c.checked=true;const lo=S.les[c.id]=S.les[c.id]||{};lo.txt=c.txt;save();render();break;
+ case 'les':lesRate(d.v==='1');break;
+ case 'spot':spotAnswer(+d.k);break;
+ case 'buy':{const it=ITEMS[d.it];if(S.gold<it.p){toast('Zu wenig Gold');break;}S.gold-=it.p;S.items[d.it]=(S.items[d.it]||0)+1;save();floatTxt('−'+it.p+' Gold','g');snd('gold');toast(it.n+' gekauft');render();break;}
+ case 'copyMuster':{const mi=$('#mine');if(mi.value.trim()&&!confirm('Deine Antwort mit der Musterantwort überschreiben?'))break;mi.value=QM[mi.dataset.id].muster;qs(mi.dataset.id).mine=mi.value;save();$('#mineWc').textContent=wc(mi.value)+' Wörter';toast('Vorlage übernommen – jetzt in deine Worte bringen');break;}
+ case 'checkMine':$('#mineCheck').innerHTML='<div class="read" style="padding:6px 10px;margin-top:8px">'+killHTML(killCheck($('#mine').value))+'</div>';break;
+ case 'libReveal':libShown[d.id]=true;render();break;
+ case 'libRate':{const id=location.hash.split('/')[2];rateQ(id,d.r);save();toast('Bewertet: '+d.r);render();break;}
+ case 'libFilter':S.libFilter=d.g;save();render();break;
+ case 'lflip':LF.flip=!LF.flip;render();break;
+ case 'lfKnow':S.fc[LF.cards[LF.i].id]=1;save();LF.i++;LF.flip=false;render();break;
+ case 'lfAgain':{const k=LF.cards.splice(LF.i,1)[0];delete S.fc[k.id];LF.cards.push(k);LF.flip=false;save();render();break;}
+ case 'lfPrev':if(LF.i>0){LF.i--;LF.flip=false;render();}break;
+ case 'lfNew':LF=null;render();break;
+ case 'lesLib':{const l=LESSONS.find(x=>x.id===d.id),t=(document.querySelector('[data-les="'+d.id+'"]')||{}).value||'';const o=S.les[d.id]=S.les[d.id]||{};o.txt=t;save();
+  $('#les_'+d.id).innerHTML='<div class="read" style="margin-top:10px"><b>Checkliste</b> (einfache Wortprüfung)<ul>'+l.check.map(([re,lab])=>'<li>'+(t.trim()&&re.test(t)?'✓ ':'✗ ')+esc(lab)+'</li>').join('')+'</ul><div class="fbbox ok"><b>Musterlösung:</b> '+esc(l.sol)+'</div></div>';break;}
+ case 'killRun':{const t=$('#killText').value;S.kill=t;save();$('#killOut').innerHTML=killHTML(killCheck(t));break;}
+ case 'print':fillPrint();window.print();break;
+ case 'export':doExport();break;
+ case 'import':$('#fileImport').click();break;
+ case 'reset':if(confirm('Wirklich alles löschen (Profil, Gold, Bewertungen, eigene Antworten)?')){localStorage.removeItem(KEY);S=blank();LF=null;libShown={};toast('Zurückgesetzt');go('#menu');}break;
+ }});
+document.addEventListener('input',e=>{const t=e.target,c=cur();
+ if(t.id==='mine'){qs(t.dataset.id).mine=t.value;saveSoon();const w=$('#mineWc');if(w)w.textContent=wc(t.value)+' Wörter';}
+ else if(t.id==='draft'&&c)c.draft=t.value;
+ else if(t.id==='lesTxt'&&c)c.txt=t.value;
+ else if(t.dataset&&t.dataset.les){const o=S.les[t.dataset.les]=S.les[t.dataset.les]||{};o.txt=t.value;saveSoon();}
+ else if(t.id==='killText'){S.kill=t.value;saveSoon();}});
+$('#fileImport').addEventListener('change',e=>{const f=e.target.files[0];if(f)doImport(f);e.target.value='';});
+window.addEventListener('beforeprint',fillPrint);
+fillPrint();render();
+</script>
+</body>
+</html>
