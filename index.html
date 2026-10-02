@@ -152,6 +152,8 @@ ol.steps{margin:.2em 0;padding-left:1.3em}
 .grid2>*{min-width:0}
 details.wk{scroll-margin-top:96px}
 .wsub{background:#fff;border:1px solid #ddd8ce;border-left:4px solid var(--acc);border-radius:8px;padding:8px 12px;margin:8px 0}
+.atk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.atk .opt{margin:0;text-align:center;font-weight:650;overflow-wrap:anywhere}
+.bar.arV i{background:linear-gradient(90deg,#2f6fb0,#5aa0f0)}.bar.arL i{background:linear-gradient(90deg,#b07a1f,#f0c050)}.bar.arQ i{background:linear-gradient(90deg,#3f9a3b,#6fd067)}
 .tabs .on{background:var(--acc);border-color:var(--acc);color:#1b1407;font-weight:700}
 .qrow{display:flex;gap:10px;align-items:center;background:#1a1e28;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:7px;text-decoration:none;color:var(--ink)}
 .qrow:hover{border-color:var(--acc)}
@@ -890,7 +892,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function today(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function blank(){return {v:1,hero:null,gold:0,xp:0,mmr:1000,streak:{last:null,n:0},sound:false,q:{},qz:{},fc:{},les:{},kill:'',towers:{top:0,mid:0,bot:0,tpm:0,job:0},season:1,
- items:{hint:1,boots:1,second:0,scroll:1},shield:0,boss:{wins:0,tries:0},ancient:{wins:0,tries:0},match:null,last:null,hist:[],life:{matches:0,lh:0,dn:0},libFilter:'all'};}
+ items:{hint:1,boots:1,second:0,scroll:1},shield:0,boss:{wins:0,tries:0},ancient:{wins:0,tries:0},match:null,last:null,hist:[],life:{matches:0,lh:0,dn:0},libFilter:'all',arena:{dex:{},pos:0,sw:0,ti:0,badges:{},round:null,fight:null,ld:null,streak:{last:null,n:0},rounds:0,lastT:null}};}
 let S=load();
 function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.v===1){const b=blank();const o=Object.assign(b,r);o.items=Object.assign(blank().items,r.items||{});o.towers=Object.assign(blank().towers,r.towers||{});return o;}}catch(e){}return blank();}
 let saveT=null;
@@ -1079,7 +1081,7 @@ const V={};
 V.menu=()=>{const li=levelInfo(S.xp),all=COREQ,c=stats(all),m=M();
  return '<div class="panel" style="text-align:center;padding:26px 18px"><h3>Lernspiel im MOBA-Stil · Stelle Lean Consultant (intern)</h3><h1 style="font-size:2.3rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)">Lean Lanes</h1>'
  +'<p>Drei Lanes, Creeps, Tower, ein Boss und das Ancient. Jede Creep ist eine Lernfrage. Die Mid-Lane mit den '+COREQ.length+' Gesprächsfragen ist die Hauptlane.</p>'
- +'<div class="row" style="justify-content:center;margin-top:10px">'+(m?'<a class="btn gold big" href="#map">Match fortsetzen</a>':'<a class="btn gold big" href="#hero">Match starten</a>')+'<a class="btn big" href="#lib">Lernbibliothek</a></div><p class="hint" style="margin-top:10px">Ein Match dauert etwa 10–15 Minuten. Fortschritt bleibt im Browser gespeichert.</p></div>'
+ +'<div class="row" style="justify-content:center;margin-top:10px">'+(m?'<a class="btn gold big" href="#map">Match fortsetzen</a>':'<a class="btn gold big" href="#hero">Match starten</a>')+'<a class="btn big" href="#lib">Lernbibliothek</a><a class="btn big" href="#arena">Lean-Arena</a></div><p class="hint" style="margin-top:10px">Ein Match dauert etwa 10–15 Minuten. Fortschritt bleibt im Browser gespeichert.</p></div>'
  +jobTeaser()+'<div class="grid2"><div class="panel"><h3>Profil</h3><div class="row">'+(S.hero?portrait(HM[S.hero]):'')+'<div><div style="font-size:1.15rem;font-weight:750">'+rankOf(S.mmr)+' · '+S.mmr+' MMR</div><div class="hint">'+nextRank(S.mmr)+'</div></div></div>'
  +'<p style="margin-top:12px">Level <b>'+li.l+'</b> / 25</p><div class="bar xp big"><i style="width:'+(li.l>=25?100:li.rest/li.need*100)+'%"></i></div><p class="hint">'+(li.l>=25?'Max-Level':li.rest+' / '+li.need+' XP bis Level '+(li.l+1))+'</p>'
  +'<div class="row"><span class="chip">Streak: '+(S.streak.n||0)+' Tag'+(S.streak.n===1?'':'e')+'</span><span class="chip">Gold: '+S.gold+'</span><span class="chip">Matches: '+S.life.matches+'</span><span class="chip">Season '+S.season+'</span>'+(S.shield?'<span class="chip sitzt">Schild der Standardarbeit</span>':'')+'</div></div>'
@@ -1206,6 +1208,139 @@ V.stelle=()=>{const m=M();
  +'<div class="grid2"><div class="panel"><h3>Kluge Fragen an den Interviewer</h3><div class="read"><ol class="steps">'+RUECK_JOB.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ol></div></div>'
  +'<div class="panel"><h3>Vorbereitung (Hinweise, keine Firmenfakten)</h3><div class="read"><ul class="steps">'+PREP_JOB.map(r=>'<li>'+fmt(r)+'</li>').join('')+'</ul></div></div></div>'
  +'<div class="panel"><h3>Alle Stellen-Fragen</h3>'+GROUPS.filter(([g])=>JOBG.includes(g)).map(([g,l])=>'<h4 style="margin-top:12px">'+esc(l)+'</h4>'+QS.filter(q=>q.g===g).map(q=>'<a class="qrow" href="#lib/q/'+q.id+'"><span class="qt">'+esc(q.q)+'</span>'+chip(rateOf(q.id))+'</a>').join('')).join('')+'</div>';};
+/* ===== Lean-Arena: Gegner = echte Fachbegriffe, Angriffe = echte Methoden, Lebenspunkte = OEE ===== */
+WISSEN.push({id:'w_spaghetti',bl:'Beispiel Lebensmittelproduktion',t:'Spaghetti-Diagramm',def:'Die Laufwege einer Person (oder eines Materials) werden auf einen Grundriss gezeichnet. Die Linien sehen oft aus wie ein Teller Spaghetti – und machen unnötige Wege sichtbar.',
+ why:'Bewegung und Transport fallen im Alltag kaum auf. Auf Papier sind sie sofort sichtbar und messbar (Meter, Anzahl Gänge).',
+ how:['Grundriss des Bereichs skizzieren.','Eine Person bei einem Ablauf begleiten (z. B. Sortenwechsel) und jeden Weg einzeichnen.','Wege zählen bzw. messen, Gründe notieren.','Mit dem Team Plätze und Layout ändern (5S, vorbereiteter Werkzeugwagen) – danach erneut zeichnen.'],
+ bsp:'Z. B. läuft ein Bediener beim Sortenwechsel mehrmals zum Werkzeugschrank und ins Lager für Folie – mit einem vorbereiteten Wagen am Auslauf fallen die meisten Wege weg.',
+ say:'„Mit dem Spaghetti-Diagramm sieht jeder in einer Minute, wie viel wir laufen.“',falle:'Das Diagramm allein zeichnen statt mit dem Team – oder nur zeichnen, ohne danach das Layout zu ändern.'});
+const AR_M=[['smed','SMED','w_smed'],['kanban','Kanban / Pull','w_kanban'],['poka','Poka Yoke','w_poka'],['5s','5S','w_5s'],['spaghetti','Spaghetti-Diagramm','w_spaghetti'],['std','Standardarbeit','w_std'],['vsm','Wertstromanalyse','w_vsm'],['kaizen','Kaizen / Ideenmanagement','w_kvp'],['tpm','TPM / autonome Instandhaltung','w_t_am'],['jidoka','Jidoka / Andon','w_jidoka']].map(([id,n,card])=>({id,n,card}));
+const ARM=Object.fromEntries(AR_M.map(m=>[m.id,m]));
+function T_(id,g,de,jp,en,bar,ctr,d,ex,why){return {id,g,de,jp,en,bar,ctr,d,ex,why,card:g==='loss'?'w_t_6v':'w_muda'};}
+const AR_T=[
+ T_('tra','muda','Transport','Unpan','Transportation','L',['vsm'],'Material wird unnötig bewegt oder umgelagert.','Paletten mit Packmitteln werden zweimal umgelagert, bevor sie an die Linie kommen.','Die Wertstromanalyse mit Blick aufs Layout zeigt unnötige Wege und Umlagerungen im ganzen Fluss.'),
+ T_('inv','muda','Bestände','Zaiko','Inventory','Q',['kanban','vsm'],'Mehr Rohstoff, Halbfertig- oder Fertigware als gerade gebraucht wird – Bestände verdecken Probleme.','Volle Pufferstrecke zwischen Abfüllung und Kartonierung; Ware mit Mindesthaltbarkeit altert im Lager.','Kanban/Pull begrenzt Bestände – Nachschub kommt erst, wenn verbraucht wurde; die Wertstromanalyse zeigt, wo sie liegen.'),
+ T_('mot','muda','Bewegung','Dōsa','Motion','V',['5s','spaghetti'],'Unnötige Wege, Suchen und Handgriffe der Menschen.','Der Bediener läuft beim Sortenwechsel mehrmals zum Werkzeugschrank.','5S gibt allem einen festen Platz; das Spaghetti-Diagramm macht die Laufwege sichtbar.'),
+ T_('wai','muda','Warten','Temachi','Waiting','V',['smed','std'],'Menschen oder Anlagen warten – auf Material, Freigabe, Personal oder Maschine.','Die Linie steht beim Wechsel, alle warten auf Schlosser und Werkzeugwagen – wie früher an Anlage A.','SMED zieht die Vorbereitung vor den Stopp; Standardarbeit regelt, wer wann was macht.'),
+ T_('ovp','muda','Überproduktion','Tsukurisugi','Overproduction','L',['kanban'],'Mehr oder früher produzieren als gebraucht – gilt als schlimmste Verschwendung, weil sie die anderen erzeugt.','Eine Sorte läuft „auf Vorrat“ weiter, um den nächsten Wechsel hinauszuschieben.','Pull/Kanban produziert nur, was verbraucht wurde.'),
+ T_('opr','muda','Überbearbeitung','Kakō','Over-processing','L',['std','vsm'],'Mehr Aufwand, als der Kunde braucht.','Doppelte Kontrollen und Protokolle, die niemand auswertet.','Standardarbeit legt fest, was wirklich nötig ist; die Wertstromanalyse zeigt Schritte ohne Kundennutzen.'),
+ T_('def','muda','Fehler / Nacharbeit','Furyō','Defects','Q',['poka','jidoka'],'Ausschuss, Nacharbeit und Reklamationen.','Falsch bedruckte Etiketten, unterfüllte Packungen.','Poka Yoke verhindert Verwechslungen; Jidoka/Andon stoppt bei Abweichung, statt Fehler weiterzuproduzieren.'),
+ T_('tal','muda','Ungenutztes Mitarbeiterpotenzial',null,'Unused Talent','L',['kaizen'],'Wissen und Ideen der Mitarbeitenden werden nicht genutzt – die „+1“ zu den klassischen sieben.','Der Bediener kennt die Ursache des Kurzstillstands, aber niemand fragt ihn.','Kaizen und Ideenmanagement holen die Ideen der Leute vor Ort ab und setzen sie um.'),
+ T_('brk','loss','Störungen / Ausfälle',null,'Equipment Failure','V',['tpm'],'Die Anlage fällt aus und muss repariert werden.','Der Antrieb des Verschließers fällt aus, die Linie steht bis zur Reparatur.','TPM/autonome Instandhaltung findet Defekte beim Reinigen und Inspizieren, bevor sie zum Ausfall werden.'),
+ T_('set','loss','Rüsten & Einrichten',null,'Setup and Adjustments','V',['smed'],'Stillstand für Sorten- oder Formatwechsel und Einstellarbeiten.','Sortenwechsel mit Reinigung und Freigabe an der Abfülllinie.','SMED trennt intern und extern und zieht die Vorbereitung vor den Stopp.'),
+ T_('min','loss','Leerlauf & Kurzstillstände',null,'Idling and Minor Stops','L',['tpm','kaizen'],'Kurze Unterbrechungen, die oft gar nicht erfasst werden.','Ein Becher verkantet am Einlauf, der Bediener löst ihn in Sekunden.','Autonome Instandhaltung und gezielte Verbesserung (Kobetsu Kaizen) gehen die Ursachen der Kurzstillstände an.'),
+ T_('spd','loss','Reduzierte Geschwindigkeit',null,'Reduced Speed','L',['tpm','kaizen'],'Die Anlage läuft unter ihrer idealen Taktzeit.','Die Linie wird langsamer gefahren, weil der Etikettierer sonst Probleme macht.','TPM bringt die Anlage in ihren Grundzustand, Kaizen beseitigt die Ursache für das Langsamfahren.'),
+ T_('sta','loss','Anlaufverluste',null,'Startup Losses','Q',['smed','std'],'Ausschuss und Einstellverluste nach Wechsel oder Schichtstart, bis die Linie stabil läuft.','Die ersten Packungen nach dem Sortenwechsel sind falsch gefüllt.','Standardisierte Einstellwerte und ein sauberer SMED-Ablauf verkürzen das Einfahren.'),
+ T_('rej','loss','Ausschuss & Nacharbeit',null,'Process Defects','Q',['poka','jidoka'],'Fehlerhafte Produkte im laufenden Betrieb.','Die Kontrollwaage schleust unterfüllte Packungen aus.','Poka Yoke verhindert Fehler; Jidoka stoppt die Linie, wenn sie sich häufen.'),
+ T_('muda','trio','Verschwendung','Muda','Waste','L',['vsm','kaizen'],'Alles, was Zeit oder Geld kostet, ohne dass der Kunde es bezahlt.','Warten, Suchen und unnötige Transporte an der Linie.','Die Wertstromanalyse macht Verschwendung im Fluss sichtbar, Kaizen beseitigt sie Schritt für Schritt.'),
+ T_('mura','trio','Ungleichmäßigkeit','Mura','Unevenness','L',['kanban','std'],'Schwankungen in Menge, Takt oder Ablauf.','Auftragsgrößen schwanken stark, die Linie wechselt ständig zwischen Hetze und Leerlauf.','Pull/Kanban und Standardarbeit glätten den Fluss und machen Schwankungen sichtbar.'),
+ T_('muri','trio','Überlastung','Muri','Overburden','V',['std','tpm'],'Mensch oder Maschine werden über ihre Grenze belastet.','Die Linie läuft dauerhaft über Nenntakt, die Schicht ist unterbesetzt.','Standardarbeit plant realistische Arbeitsinhalte; TPM verhindert, dass Anlagen dauerhaft überlastet laufen.')];
+const ART=Object.fromEntries(AR_T.map(t=>[t.id,t])),BARN={V:'Verfügbarkeit',L:'Leistung',Q:'Qualität'},BAR0={V:90,L:95,Q:99};
+const AR_STEPS=['Grundreinigung','Verschmutzungsquellen beseitigen','Vorläufige Standards (CIL)','Gesamtinspektion','Autonome Inspektion','Standardisieren & Organisieren','Autonomes Management'];
+const AR_LEAD={meister:{n:'Skeptischer Meister',arena:'Arena 1 · Rüstzeit',intro:'„Rüstzeit verkürzen? Das haben hier schon viele versucht.“ Überzeuge ihn mit deiner Geschichte von Anlage A: Formatwechsel rund 8 h → meistens 3–5 h (Quelle: Rüstauswertungen, keine Stoppuhr-Studie).',qs:['a06','t07','a05']},
+ schicht:{n:'Schichtleiter mit Widerstand',arena:'Arena 2 · Beteiligung',intro:'„Noch ein Projekt? Meine Leute haben dafür keine Zeit.“ Gewinne sein Vertrauen mit Beteiligung statt Druck.',qs:['a03','a08','t08']},
+ werk:{n:'Werksleitung (Zahlen)',arena:'Arena 3 · Kennzahlen',intro:'„Was bringt das in Zahlen?“ Rechne sauber und zeig, wo der größte Hebel liegt.',qs:['t03','t04','a04']},
+ panel:{n:'Interview-Panel',arena:'Finale · Vorstellungsgespräch',intro:'Personalabteilung, Fachbereich und künftige Führungskraft sitzen dir gegenüber: Motivation, Erfahrung, Rollout – und eine Frage auf Englisch.',qs:['p01','p02','a01','e01']}};
+const AR_ROUTE=[{k:'st',s:1},{k:'st',s:2},{k:'ld',id:'meister'},{k:'st',s:3},{k:'st',s:4},{k:'ld',id:'schicht'},{k:'st',s:5},{k:'st',s:6},{k:'ld',id:'werk'},{k:'st',s:7},{k:'ld',id:'panel'},{k:'trio'}];
+const AR_TRIO=['muda','mura','muri'],AR_WINS=2,AR_ROUND=300,AR_DAY=864e5;
+function AR(){if(!S.arena||!S.arena.dex)S.arena=Object.assign(blank().arena,S.arena||{});return S.arena;}
+function tn(t){return t.g==='trio'?t.jp+' ('+t.de+' · '+t.en+')':t.de+' ('+(t.g==='loss'?'Verlust':'Muda')+' · '+t.en+')';}
+function dx(id){const a=AR();return a.dex[id]=a.dex[id]||{lv:0,w:0,seen:0,last:0};}
+function tired(id){const d=AR().dex[id];return !!d&&d.lv>0&&Date.now()-d.last>3*AR_DAY;}
+function oee(b){return b.V*b.L*b.Q/10000;}
+function roundLeft(){const r=AR().round;return r?Math.max(0,Math.ceil(AR_ROUND-(Date.now()-r.start)/1000)):0;}
+function fmtT(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function stars(lv){return '★'.repeat(lv)+'☆'.repeat(3-lv);}
+function wLinkA(id){const w=WISSEN.find(x=>x.id===id);return w?'<a class="btn sm" href="#lib/wissen/'+id+'">📖 '+esc(w.t.split(' – ')[0])+'</a>':'';}
+function arPool(){const n=AR_ROUTE[AR().pos];if(n&&n.k==='st')return AR_T.filter(t=>n.s<=3?t.g==='muda':t.g!=='trio');return AR_T;}
+function arPick(pool){const a=AR();const ws=pool.map(t=>{const d=a.dex[t.id];let w=!d||!d.seen?3:d.lv>=3?.5+d.w:1+(3-d.lv)*.5+d.w*1.5;if(tired(t.id))w+=4;if(t.id===a.lastT&&pool.length>1)w=0;return w;});
+ let r=Math.random()*ws.reduce((s,x)=>s+x,0);for(let i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i].id;}return pool[0].id;}
+function arOpts(id){const t=ART[id];return shuffle([shuffle(t.ctr)[0],...shuffle(AR_M.filter(m=>!t.ctr.includes(m.id))).slice(0,3).map(m=>m.id)]);}
+function arCatch(id){const t=ART[id],d=dx(id),ref=d.lv>=3||tired(id),lv=ref?Math.floor(Math.random()*Math.min(3,d.lv)):d.lv;let txt,ctx='',right,pool;
+ const same=AR_T.filter(x=>x.id!==id&&x.g===t.g),oth=AR_T.filter(x=>x.id!==id&&x.g!==t.g);
+ const pick=f=>[...new Set(shuffle(same).map(f).concat(shuffle(oth).map(f)).filter(v=>v&&v!==f(t)))].slice(0,3);
+ if(lv===0){txt='Wie heißt dieser Begriff auf Deutsch?';ctx=t.d+' Beispiel: '+t.ex;right=t.de;pool=pick(x=>x.de);}
+ else if(lv===1){if(t.jp){txt='Japanischer Begriff für „'+t.de+'“?';right=t.jp;pool=pick(x=>x.jp);}
+  else if(t.g==='loss'){txt='Welchen OEE-Faktor senkt „'+t.de+'“ vor allem?';right=BARN[t.bar];pool=Object.values(BARN).filter(v=>v!==right);ctx='Für die 6 großen Verluste gibt es keinen gängigen japanischen Einzelbegriff – Stufe 2 fragt deshalb die OEE-Zuordnung.';}
+  else{txt='Zu welchem japanischen Oberbegriff gehört „'+t.de+'“?';right='Muda';pool=['Mura','Muri','Kaizen'];ctx='Für die achte Verschwendung gibt es keinen klassischen japanischen Einzelbegriff – sie wurde später ergänzt.';}}
+ else{txt='Englischer Fachbegriff für „'+t.de+'“?';right=t.en;pool=pick(x=>x.en);}
+ return {lv,ref,txt,ctx,right,opts:shuffle([{t:right,ok:true},...pool.map(v=>({t:v,ok:false}))]),ans:null};}
+function arStart(){const a=AR(),t=today(),y=today(new Date(Date.now()-AR_DAY));if(a.streak.last!==t){a.streak.n=a.streak.last===y?a.streak.n+1:1;a.streak.last=t;}
+ a.round={start:Date.now(),wins:0,lv:0,combo:0,best:0,bars:Object.assign({},BAR0)};a.rounds++;a.fight=null;a.ld=null;save();go('#arena');}
+function arFight(id,only){const a=AR();a.lastT=id;dx(id);a.fight={id,hp:100,opts:arOpts(id),msg:null,ph:only?'catch':'fight',wk:null,q:only?arCatch(id):null,only:!!only,res:null};save();go('#arena/kampf');}
+function arNode(){const a=AR();if(!a.round||roundLeft()<=0){toast('Erst eine 5-Minuten-Runde starten.');go('#arena');return;}const n=AR_ROUTE[a.pos];
+ if(n&&n.k==='ld'){a.ld={id:n.id,i:0,pts:0,rev:false,done:false};a.fight=null;save();go('#arena/leiter');return;}
+ if(n&&n.k==='trio')return arFight(AR_TRIO[a.ti]);arFight(arPick(arPool()));}
+function combo(ok){const r=AR().round;if(!r)return;if(ok){r.combo++;r.best=Math.max(r.best,r.combo);}else r.combo=0;}
+function arDrain(f,t,n){const r=AR().round;if(!r)return false;r.bars[t.bar]=Math.max(0,r.bars[t.bar]-n);
+ if(oee(r.bars)<40){r.bars=Object.assign({},BAR0);r.combo=0;f.ph='done';f.res='stop';f.msg={ok:false,txt:'Linienstillstand – die OEE ist unter 40 % gefallen. Die Linie wird neu angefahren (Balken zurückgesetzt).'};return true;}return false;}
+function arHit(f,dmg){f.hp=Math.max(0,f.hp-dmg);if(f.hp<=0){f.ph='catch';f.q=arCatch(f.id);}else f.opts=arOpts(f.id);}
+function arAttack(mid){const f=AR().fight;if(!f||f.ph!=='fight')return;const t=ART[f.id],m=ARM[mid];
+ if(t.ctr.includes(mid)){combo(true);f.msg={ok:true,txt:'Sehr effektiv! '+m.n+' gegen '+t.de+': '+t.why,link:m.card};snd('lh');arHit(f,55);}
+ else{combo(false);dx(f.id).w++;f.msg={ok:false,txt:'Nicht sehr effektiv: '+m.n+' ist nicht der Hebel gegen '+t.de+'. Besser: '+t.ctr.map(c=>ARM[c].n).join(' oder ')+' – '+t.why+' Die Linie verliert '+BARN[t.bar]+'.',link:ARM[t.ctr[0]].card,link2:t.card};snd('dmg');if(!arDrain(f,t,10))arHit(f,15);}
+ save();render();}
+function wkSentence(t){return (t.g==='trio'?t.jp+' ('+t.de+')':t.de)+' heißt: '+t.d+' Zum Beispiel: '+t.ex+' Dagegen hilft vor allem '+t.ctr.map(c=>ARM[c].n).join(' oder ')+': '+t.why;}
+function arWkRate(r){const f=AR().fight;if(!f||!f.wk)return;const t=ART[f.id];f.wk=null;
+ if(r==='gut'){combo(true);f.msg={ok:true,txt:'Gut erklärt – der Werker hat es verstanden. Starker Treffer.'};arHit(f,55);}
+ else if(r==='halb'){f.msg={ok:true,txt:'Halb erklärt – lies den Mustersatz noch einmal laut. Mittlerer Treffer.',link:t.card};arHit(f,30);}
+ else{combo(false);dx(f.id).w++;f.msg={ok:false,txt:'Noch nicht erklärt – kein Schaden, die Linie verliert '+BARN[t.bar]+'. Lies die Lernkarte.',link:t.card};if(!arDrain(f,t,8))f.opts=arOpts(f.id);}
+ save();render();}
+function arAdvance(){const a=AR(),n=AR_ROUTE[a.pos];if(!n)return;
+ if(n.k==='st'){a.sw++;if(a.sw>=AR_WINS){a.sw=0;a.pos++;toast('Schritt '+n.s+' geschafft: '+AR_STEPS[n.s-1]);}}
+ else if(n.k==='trio'){a.ti++;if(a.ti>=3){a.ti=0;a.pos++;a.badges.route=(a.badges.route||0)+1;toast('Route geschafft: Muda / Mura / Muri besiegt!');}}}
+function arCatchAns(k){const a=AR(),f=a.fight;if(!f||!f.q||f.q.ans!=null)return;const q=f.q,t=ART[f.id],d=dx(f.id),r=a.round;q.ans=k;d.seen++;
+ if(q.opts[k].ok){d.w=Math.max(0,d.w-1);d.last=Date.now();if(q.ref)f.res='ref';else{d.lv=Math.min(3,d.lv+1);f.res='lv';if(r)r.lv++;}combo(true);
+  if(!f.only){if(r){r.wins++;r.bars[t.bar]=Math.min(100,r.bars[t.bar]+4);}arAdvance();}gain(15,15);snd('win');}
+ else{d.w++;f.res='miss';combo(false);snd('dmg');}
+ f.ph='done';save();render();}
+function arLRate(rt){const a=AR(),L=a.ld;if(!L||L.done)return;const ld=AR_LEAD[L.id];rateQ(ld.qs[L.i],rt);L.pts+=rt==='sitzt'?1:rt==='wackelt'?.5:0;L.i++;L.rev=false;
+ if(L.i>=ld.qs.length){L.done=true;L.ok=L.pts/ld.qs.length>=.65;if(L.ok){a.badges[L.id]=1;const n=AR_ROUTE[a.pos];if(n&&n.k==='ld'&&n.id===L.id)a.pos++;gain(60,60);snd('win');}else snd('dmg');}
+ save();render();window.scrollTo(0,0);}
+function ggS(v,l){return '<div class="ggStat"><div class="v">'+v+'</div><div class="l">'+l+'</div></div>';}
+function barsHTML(b){return '<div style="margin-top:8px">'+['V','L','Q'].map(k=>'<div class="gbar"><span>'+BARN[k]+'</span><div class="bar ar'+k+'"><i style="width:'+b[k]+'%"></i></div><span class="hint">'+Math.round(b[k])+' %</span></div>').join('')+'<p style="margin:.3em 0 0"><b>Linien-OEE '+oee(b).toFixed(1).replace('.',',')+' %</b> <span class="hint">= Verfügbarkeit × Leistung × Qualität</span></p></div>';}
+function arNodeLabel(n){return n.k==='st'?'Schritt '+n.s+' · '+AR_STEPS[n.s-1]:n.k==='ld'?AR_LEAD[n.id].arena+' · '+AR_LEAD[n.id].n:'Finale · Muda / Mura / Muri';}
+V.arena=sub=>{if(sub==='kampf')return arFightV();if(sub==='leiter')return arLeadV();if(sub==='dex')return arDexV();
+ const a=AR(),r=a.round,left=roundLeft(),n=AR_ROUTE[a.pos],col=AR_T.filter(t=>(a.dex[t.id]||{}).lv>0).length,tir=AR_T.filter(t=>tired(t.id)).length;
+ let h='<div class="panel job"><h3>Spielmodus</h3><h1>Lean-Arena</h1><p>Gegner sind echte Fachbegriffe: die 7+1 Verschwendungen, die 6 großen Verluste und im Finale Muda / Mura / Muri. Angriffe sind echte Methoden. Die Lebenspunkte deiner Linie sind die OEE.</p><p class="hint">Route = die 7 Schritte der autonomen Instandhaltung · Arena-Leiter stellen echte Interviewfragen zur Stelle · Runden à 5 Minuten.</p><div class="row"><a class="btn" href="#arena/dex">Lean-Dex ('+col+' / '+AR_T.length+(tir?' · '+tir+' müde':'')+')</a><a class="btn" href="#lib/wissen">📖 Lernkarten</a><a class="btn" href="#menu">Menü</a></div></div>';
+ if(!r||left<=0)h+='<div class="panel">'+(r?'<h3>Runde vorbei</h3><div class="grid4">'+ggS(r.wins,'Kämpfe gewonnen')+ggS(r.lv,'Level-ups')+ggS(r.best,'Beste Kombo')+ggS(Math.round(oee(r.bars))+' %','OEE am Ende')+'</div>':'<h3>5-Minuten-Runde</h3>')+'<p>Runden-Streak: <b>'+a.streak.n+' Tag'+(a.streak.n===1?'':'e')+'</b> · Runden gesamt: '+a.rounds+'</p><button class="btn gold big" data-act="arStart">'+(r?'Neue Runde starten (5 min)':'Runde starten (5 min)')+'</button></div>';
+ else h+='<div class="panel"><div class="row"><h3 style="margin:0">Runde läuft</h3><span class="sp"></span><span class="chip">⏱ <span id="arT" data-run="1">'+fmtT(left)+'</span></span><span class="chip">Kombo '+r.combo+'</span><span class="chip">Siege '+r.wins+'</span></div>'+barsHTML(r.bars)
+  +'<button class="btn gold big" style="margin-top:12px;width:100%" data-act="arNode">'+(n?(n.k==='ld'?'Arena betreten: ':n.k==='trio'?'Finale: ':'Kampf: ')+esc(arNodeLabel(n)):'Freies Training (alle Begriffe)')+'</button></div>';
+ h+='<div class="panel"><h3>Route · 7 Schritte der autonomen Instandhaltung</h3>'+AR_ROUTE.map((x,i)=>'<div class="qrow" style="cursor:default"><span class="qt">'+(i<a.pos?'✅ ':i===a.pos?'▶ ':'🔒 ')+esc(arNodeLabel(x))+(i===a.pos&&x.k==='st'?' <span class="hint">('+a.sw+'/'+AR_WINS+' Siege)</span>':i===a.pos&&x.k==='trio'?' <span class="hint">('+a.ti+'/3)</span>':'')+'</span></div>').join('')+(a.pos>=AR_ROUTE.length?'<div class="banner ok">Route geschafft!</div>':'')+'</div>';
+ return h;};
+function arFightV(){const a=AR(),f=a.fight;if(!f)return V.arena();const t=ART[f.id],d=dx(f.id),r=a.round,hide=f.ph==='catch';
+ let h='<div class="panel"><div class="row"><span class="chip grp">'+(t.g==='loss'?'6 große Verluste':t.g==='trio'?'Finale':'7+1 Verschwendungen')+'</span><span class="chip">'+stars(d.lv)+'</span>'+(tired(f.id)?'<span class="chip wackelt">müde</span>':'')+'<span class="sp"></span>'+(r&&roundLeft()>0?'<span class="chip">⏱ <span id="arT">'+fmtT(roundLeft())+'</span></span><span class="chip">Kombo '+r.combo+'</span>':'')+'</div>'
+ +'<div class="row" style="margin-top:8px;flex-wrap:nowrap">'+CREEP_SVG.replace('CLS',f.ph!=='fight'?'dead':'')+'<div style="flex:1;min-width:0"><h2 style="margin:0;overflow-wrap:anywhere">'+(hide?'Wie heißt dieser Gegner?':esc(tn(t)))+'</h2><div class="bar boss big"><i style="width:'+f.hp+'%"></i></div><span class="hint">trifft die '+BARN[t.bar]+'</span></div></div>'+(r?barsHTML(r.bars):'')+'</div>';
+ const lk=m=>m&&(m.link||m.link2)?'<div class="row" style="margin-top:6px">'+(m.link?wLinkA(m.link):'')+(m.link2?wLinkA(m.link2):'')+'</div>':'';
+ const msg=f.msg?'<div class="fbbox '+(f.msg.ok?'ok':'bad')+'">'+esc(f.msg.txt)+lk(f.msg)+'</div>':'';
+ if(f.ph==='fight'){
+  if(f.wk)return h+'<div class="panel"><h3>Erklär’s dem Werker</h3><div class="read"><p class="qbig">Erkläre einem Werker in 2–3 Sätzen, was „'+esc(t.de)+'“ ist und was man dagegen tut – laut, ohne Fachchinesisch.</p>'
+   +(f.wk.rev?'<div class="lbl">Mustersatz</div><p><b>„'+esc(wkSentence(t))+'“</b></p><h3 style="margin-top:10px">Wie gut war deine Erklärung?</h3><div class="rate"><button class="r-sitzt" data-act="arWkRate" data-r="gut">gut</button><button class="r-wackelt" data-act="arWkRate" data-r="halb">halb</button><button class="r-neu" data-act="arWkRate" data-r="nicht">noch nicht</button></div>'
+   :'<div class="row"><span class="chip neu" style="font-size:1rem">⏱ <span id="wkT">'+Math.max(0,f.wk.left)+' s</span></span><span class="sp"></span><button class="btn gold" data-act="arWkRev">Mustersatz zeigen</button></div>')+'</div></div>';
+  return h+msg+'<div class="panel"><h3>Wähle deine Methode</h3><div class="atk">'+f.opts.map(id=>'<button class="opt" data-act="arAtk" data-m="'+id+'">'+esc(ARM[id].n)+'</button>').join('')+'</div><button class="btn" style="margin-top:10px;width:100%" data-act="arWk">🗣 Erklär’s dem Werker (20 s)</button></div>';}
+ const q=f.q;let c=msg;
+ if(q){c+='<div class="panel"><h3>'+(q.ref?'Auffrischen':'Sammeln')+' · Stufe '+(q.lv+1)+': '+['Deutsch','Japanisch / Zuordnung','Englisch'][q.lv]+'</h3>'+(q.ctx?'<p class="hint">'+esc(q.ctx)+'</p>':'')+'<div class="qbig">'+esc(q.txt)+'</div>'
+  +q.opts.map((o,k)=>{let cl='opt';if(q.ans!=null){if(o.ok)cl+=' right';else if(k===q.ans)cl+=' wrong';}return '<button class="'+cl+'" data-act="arCatch" data-k="'+k+'"'+(q.ans!=null?' disabled':'')+'>'+esc(o.t)+'</button>';}).join('')+'</div>';}
+ if(f.ph==='done'){const res={lv:['lh','Level-up! '+t.de+' ist jetzt '+stars(d.lv)+(d.lv>=3?' – gemeistert':'')],ref:['ok','Aufgefrischt – nicht mehr müde.'],miss:['miss','Entkommen – richtig: '+(q?q.right:'')],stop:['miss','Linienstillstand']}[f.res]||['ok',''];
+  c+='<div class="panel" style="text-align:center"><div class="banner '+res[0]+'">'+esc(res[1])+'</div>'+(f.res==='miss'?'<div class="read" style="text-align:left"><b>'+esc(tn(t))+'</b>: '+esc(t.d)+lk({link:t.card})+'</div>':'')
+   +'<div class="row" style="justify-content:center;margin-top:10px">'+(f.only?'<a class="btn gold" href="#arena/dex">Zum Lean-Dex</a>':'<button class="btn gold" data-act="arNext">'+(roundLeft()>0?'Nächster Kampf':'Runde auswerten')+'</button><a class="btn" href="#arena">Zur Route</a>')+'</div></div>';}
+ return h+c;}
+function arLeadV(){const a=AR(),L=a.ld;if(!L)return V.arena();const ld=AR_LEAD[L.id],n=ld.qs.length,tr=Math.round(L.pts/n*100);
+ let h='<div class="panel job"><h3>'+esc(ld.arena)+'</h3><h1>'+esc(ld.n)+'</h1><p>'+esc(ld.intro)+'</p><div class="gbar"><span>Vertrauen</span><div class="bar xp big"><i style="width:'+tr+'%"></i></div><span class="hint">'+tr+' %</span></div><p class="hint">Gewonnen ab 65 % · Frage '+Math.min(L.i+1,n)+' / '+n+' · sitzt = voll, wackelt = halb</p></div>';
+ if(L.done)return h+'<div class="panel" style="text-align:center"><div class="banner '+(L.ok?'lh':'miss')+'">'+(L.ok?'Vertrauen gewonnen!':'Noch nicht überzeugt')+'</div><p>'+(L.ok?'Weiter auf der Route.':'Lies die Musterantworten nach und versuch es erneut.')+'</p><div class="row" style="justify-content:center"><a class="btn gold" href="#arena">Zur Route</a>'+(L.ok?'':'<button class="btn" data-act="arNode">Nochmal</button>')+'</div></div>';
+ const q=QM[ld.qs[L.i]];
+ h+='<div class="panel"><span class="chip grp">'+esc(GL[q.g])+'</span><div class="qbig" style="margin-top:8px">'+esc(q.q)+'</div><p class="hint">Antwort laut sprechen (ca. 60–90 s), dann vergleichen.</p>';
+ if(!L.rev)return h+'<textarea rows="4" placeholder="Optional: Stichworte …"></textarea><div class="row" style="margin-top:10px"><button class="btn gold" data-act="arLRev">Musterantwort zeigen</button></div></div>';
+ return h+'<div class="read">'+secGer(q)+'<div class="sec"><h3>Musterantwort</h3><div class="muster">'+fmt(q.muster)+'</div></div></div><h3 style="margin-top:12px">Wie sicher sitzt die Antwort?</h3><div class="rate"><button class="r-sitzt" data-act="arLRate" data-r="sitzt">sitzt</button><button class="r-wackelt" data-act="arLRate" data-r="wackelt">wackelt</button><button class="r-neu" data-act="arLRate" data-r="neu">neu</button></div></div>';}
+function arDexV(){const a=AR(),col=AR_T.filter(t=>(a.dex[t.id]||{}).lv>0).length;
+ return '<h1>Lean-Dex</h1><p class="hint">'+col+' / '+AR_T.length+' Begriffe gesammelt. Jeder Begriff steigt über drei Begegnungen auf: Deutsch → Japanisch (bzw. Zuordnung) → Englisch. Nach 3 Tagen ohne Wiederholung wird ein gesammelter Begriff „müde“ und braucht eine Auffrisch-Frage. Falsch beantwortete Begriffe kommen öfter.</p><div class="row" style="margin-bottom:12px"><a class="btn" href="#arena">← Lean-Arena</a></div>'
+ +[['muda','7+1 Verschwendungen (Muda)'],['loss','6 große Verluste'],['trio','Muda / Mura / Muri']].map(([g,l])=>'<h2>'+esc(l)+'</h2>'+AR_T.filter(t=>t.g===g).map(t=>{const d=a.dex[t.id]||{lv:0,seen:0},w=WISSEN.find(x=>x.id===t.card);
+  return '<details class="wk"><summary>'+esc(tn(t))+' <span class="chip">'+stars(d.lv)+'</span>'+(tired(t.id)?' <span class="chip wackelt">müde</span>':!d.seen?' <span class="chip">neu</span>':'')+'</summary>'
+  +'<div class="lbl">Was ist das?</div><p>'+esc(t.d)+'</p><div class="lbl">Beispiel Lebensmittelproduktion</div><p>'+esc(t.ex)+'</p><div class="lbl">Begriffe</div><p>Deutsch: <b>'+esc(t.de)+'</b> · Japanisch: <b>'+esc(t.jp||'– (kein gängiger Einzelbegriff)')+'</b> · Englisch: <b>'+esc(t.en)+'</b></p>'
+  +'<div class="lbl">Wirksame Methoden</div><p>'+t.ctr.map(c=>esc(ARM[c].n)).join(', ')+' – '+esc(t.why)+'</p><div class="lbl">Aus der Lernkarte „'+esc(w.t)+'“</div><p>'+fmt(w.def)+'</p>'
+  +'<div class="row">'+wLinkA(t.card)+t.ctr.map(c=>wLinkA(ARM[c].card)).join('')+(tired(t.id)?'<button class="btn gold sm" data-act="arRefresh" data-id="'+t.id+'">Auffrischen</button>':'')+'</div></details>';}).join('')).join('');}
+setInterval(()=>{if(!/^#arena/.test(location.hash)||document.hidden)return;const a=AR(),el=$('#arT');
+ if(el&&a.round){const s=roundLeft();el.textContent=fmtT(s);if(s<=0&&el.dataset.run==='1')render();}
+ const f=a.fight;if(f&&f.wk&&!f.wk.rev&&location.hash==='#arena/kampf'){f.wk.left--;const w=$('#wkT');if(w)w.textContent=Math.max(0,f.wk.left)+' s';if(f.wk.left<=0){f.wk.rev=true;save();render();}}},1000);
 /* Spickzettel */
 function spickHTML(){const top=QS.filter(q=>q.top);
  return '<div class="spick"><div class="shead"><b>Spickzettel · Lean Consultant (intern)</b><span>Stand '+new Date().toLocaleDateString('de-DE')+'</span></div><div class="scols"><div><h5>Top 10 Fragen – Kern in einer Zeile</h5><ol>'+top.map(q=>'<li><b>'+esc(q.q)+'</b><br>'+fmt(q.kern)+'</li>').join('')+'</ol></div>'
@@ -1268,6 +1403,17 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if
  case 'libReveal':libShown[d.id]=true;render();break;
  case 'libRate':{const id=location.hash.split('/')[2];rateQ(id,d.r);save();toast('Bewertet: '+d.r);render();break;}
  case 'libFilter':S.libFilter=d.g;save();render();break;
+ case 'arStart':arStart();break;
+ case 'arNode':arNode();break;
+ case 'arAtk':arAttack(d.m);break;
+ case 'arWk':{const f=AR().fight;if(f&&f.ph==='fight'){f.wk={left:20,rev:false};save();render();}break;}
+ case 'arWkRev':{const f=AR().fight;if(f&&f.wk){f.wk.rev=true;save();render();}break;}
+ case 'arWkRate':arWkRate(d.r);break;
+ case 'arCatch':arCatchAns(+d.k);break;
+ case 'arNext':{const ar=AR();if(!ar.round||roundLeft()<=0){ar.fight=null;save();go('#arena');}else arNode();break;}
+ case 'arLRev':{const L=AR().ld;if(L){L.rev=true;save();render();}break;}
+ case 'arLRate':arLRate(d.r);break;
+ case 'arRefresh':arFight(d.id,true);break;
  case 'jobLib':S.libFilter='j_tpm';save();go('#lib');break;
  case 'lflip':LF.flip=!LF.flip;render();break;
  case 'lfKnow':S.fc[LF.cards[LF.i].id]=1;save();LF.i++;LF.flip=false;render();break;
