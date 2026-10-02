@@ -150,6 +150,8 @@ ol.steps{margin:.2em 0;padding-left:1.3em}
 .panel.job{border-color:var(--gold);box-shadow:0 0 14px rgba(232,184,74,.18)}
 .jrow{padding:8px 0;border-top:1px solid #d9d5cc}.jrow:first-of-type{border-top:0}.jrow a{text-decoration:none;margin:2px 4px 2px 0;display:inline-block;max-width:100%}.jrow .chip{white-space:normal}
 .grid2>*{min-width:0}
+details.wk{scroll-margin-top:96px}
+.wsub{background:#fff;border:1px solid #ddd8ce;border-left:4px solid var(--acc);border-radius:8px;padding:8px 12px;margin:8px 0}
 .tabs .on{background:var(--acc);border-color:var(--acc);color:#1b1407;font-weight:700}
 .qrow{display:flex;gap:10px;align-items:center;background:#1a1e28;border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:7px;text-decoration:none;color:var(--ink)}
 .qrow:hover{border-color:var(--acc)}
@@ -745,6 +747,117 @@ WISSEN.push(
   bsp:'10 Minuten zu Schichtbeginn am Board: Unfälle/Beinahe-Unfälle, Reklamationen, OEE der Vorschicht, Top-3-Stillstände, offene Maßnahmen mit Name und Termin.',
   say:'„Das Board ist Werkzeug – entscheidend ist, dass daraus Maßnahmen mit Namen werden.“',falle:'Zu viele Kennzahlen; der Consultant moderiert statt der Führungskraft.'});
 const TPM_W=['w_t8','w_t_am','w_t_oee','w_t_6v','w_t_mtbf','w_t_cil','w_t_roll','w_t_food','w_t_kpi','w_tpm'];
+/* ===== Lernkarten vertiefen (Was · Warum · Vorgehen · Beispiel · Interview-Falle) ===== */
+WISSEN.push(
+ {id:'w_kanban',bl:'Beispiel Lebensmittelproduktion',t:'Kanban / Pull',def:'Pull heißt: Produziert oder nachgeliefert wird erst, wenn der Kunde oder der nächste Prozess etwas verbraucht hat. Kanban ist das Signal dafür – meist eine Karte oder ein leerer Behälter.',
+  bsp:'Verpackungsmaterial an der Linie im Zwei-Behälter-System (z. B. Folienrollen, Kartonzuschnitte): Ist der erste Behälter leer, geht die Karte ans Lager – der zweite reicht bis zur Nachlieferung. [deine Erfahrung ergänzen]',
+  say:'„Kanban liefert nach, was verbraucht wurde – nicht, was der Plan vermutet.“',falle:'Kanban als IT-Projekt verkaufen – oder bei stark schwankendem Bedarf einführen, ohne Kartenzahl und Mengen anzupassen.'},
+ {id:'w_jidoka',bl:'Beispiel Lebensmittelproduktion',t:'Jidoka / Andon',def:'Jidoka („Automation mit menschlicher Intelligenz“): Bei einer Abweichung stoppt Anlage oder Prozess, statt Fehler weiterzuproduzieren. Andon ist das Signal dafür – Lampe, Ton oder Anzeige, die sofort Hilfe ruft.',
+  bsp:'Die Kontrollwaage an der Abfüllung schleust unterfüllte Packungen aus; häufen sie sich, stoppt die Linie und die Andon-Leuchte ruft den Schichtführer. Ebenso: Metalldetektor mit automatischem Stopp.',
+  say:'„Lieber die Linie kurz stoppen als eine Palette Fehlware produzieren.“',falle:'Andon einführen, ohne zu regeln, wer in welcher Zeit reagiert – dann leuchtet die Lampe und keiner kommt.'});
+const WX={
+ w_5s:{t:'5S – Sortieren, Setzen, Säubern, Standardisieren, Selbstdisziplin',
+  why:'Ohne Ordnung kein stabiler Prozess: Suchzeiten verlängern Rüsten und Störungsbehebung, Schmutz versteckt Defekte – und in der Lebensmittelproduktion hängen Hygiene und Allergensicherheit direkt an Ordnung und Sauberkeit. 5S ist deshalb das Fundament des TPM-Hauses.',
+  how:['Bereich und Ziel wählen (z. B. Rüstplatz an der Verpackungslinie – Ziel: kein Suchen beim Sortenwechsel).','Vorher-Foto machen, Ist-Audit durchführen.','Die 5 S mit dem Team vor Ort durchgehen (siehe unten).','Standard festhalten: Fotos, Schattenbrett, Reinigungsplan.','Regelmäßiges 5S-Audit durch Team und Führung, Verlauf am Board.'],
+  sub:[['1 · Sortieren (Seiri)','Alles Unnötige aus dem Bereich entfernen – es bleibt nur, was für die Arbeit gebraucht wird.','Am Rüstplatz der Abfülllinie liegen Formatteile einer ausgelaufenen Sorte und doppelte Werkzeuge → rote Karte, raus.','Nur umräumen statt aussortieren – dann wandert der Krempel in einen Schrank.'],
+   ['2 · Setzen / Ordnung (Seiton)','Jedes benötigte Teil bekommt einen festen, gekennzeichneten Platz – griffbereit, in der Reihenfolge der Nutzung.','Schattenbrett für Werkzeuge an der Verpackungslinie; Werkzeugwagen mit festen Fächern je Formatsatz; farbcodierte Reinigungsgeräte für allergenhaltige und allergenfreie Bereiche.','Plätze festlegen, ohne die Leute zu fragen, die damit arbeiten.'],
+   ['3 · Säubern (Seiso)','Reinigen und dabei inspizieren – Schmutz, Leckagen und Verschleiß werden sichtbar.','Beim Reinigen der Dosiereinheit fällt eine undichte Dichtung auf → Mängelkarte. Produktreste an schwer zugänglichen Stellen → Verschmutzungsquelle angehen.','Reinigen als reine Putzaktion sehen – ohne Mängel zu notieren.'],
+   ['4 · Standardisieren (Seiketsu)','Die ersten drei S als Standard festschreiben, damit es jede Schicht gleich macht.','Foto-Standard „So sieht der Rüstplatz aus“; Reinigungs- und Allergenreinigungsplan mit Abhaken pro Schicht.','Den Standard nur aushängen, nicht trainieren.'],
+   ['5 · Selbstdisziplin (Shitsuke)','Dranbleiben: Standards einhalten, regelmäßig prüfen und verbessern, bis es Gewohnheit ist.','Wöchentliches 5S-Audit mit Punktzahl am Board, der Meister macht mit; Abweichungen werden besprochen, nicht bestraft.','Nach dem Startschwung nicht mehr prüfen – nach drei Monaten ist alles wie vorher.']],
+  more:[['5S-Audit','Kurze Checkliste je S (z. B. 5 Fragen, 0–4 Punkte), regelmäßig vom Team und von der Führung; der Verlauf hängt am Board. Ziel ist Verbesserung, nicht Benotung.'],
+   ['Rote-Karten-Aktion','Beim Sortieren bekommen fragliche Gegenstände eine rote Karte und kommen für eine feste Frist in eine Sammelzone. Braucht sie in der Frist keiner, werden sie entfernt.'],
+   ['Visuelles Management','Der Soll-Zustand ist auf einen Blick erkennbar: Bodenmarkierungen, Schattenbretter, Beschriftungen, Min/Max-Markierungen, Farbcodes – Abweichungen fallen sofort auf.'],
+   ['Bezug zu TPM','5S ist das Fundament des TPM-Hauses. „Säubern ist Inspizieren“ ist zugleich Schritt 1 der autonomen Instandhaltung (Grundreinigung).'],
+   ['6S','Manche Werke ergänzen Sicherheit als sechstes S – z. B. Gefahrstellen markieren, Fluchtwege freihalten. Sicherheit gehört aber immer zur Arbeit, nicht nur in die 5S-Aktion.']]},
+ w_muda:{t:'Verschwendung: 7+1 Arten (Muda) · Mura · Muri',
+  why:'Wer Verschwendung nicht sieht, verbessert an der falschen Stelle. Die Arten sind eine Brille für den Gemba-Rundgang – nicht eine Liste zum Aufsagen.',
+  how:['An die Linie gehen und einen Ablauf beobachten (z. B. einen Sortenwechsel).','Jede Tätigkeit einordnen: wertschöpfend, notwendig (z. B. Hygiene-Reinigung) oder Verschwendung.','Die größte Verschwendung mit dem Team angehen – nicht alle gleichzeitig.'],
+  sub:[['Transport (Transportation)','Material unnötig bewegen.','Paletten mit Packmitteln werden zweimal umgelagert, bevor sie an die Linie kommen.'],
+   ['Bestände (Inventory)','Mehr Material oder Ware als nötig.','Volle Pufferstrecke zwischen Abfüllung und Kartonierung; Halbfertigware mit Mindesthaltbarkeit altert.'],
+   ['Bewegung (Motion)','Unnötige Wege und Handgriffe der Menschen.','Bediener läuft beim Wechsel mehrmals zum Werkzeugschrank.'],
+   ['Warten (Waiting)','Menschen oder Anlagen warten.','Die Linie steht, alle warten auf Schlosser, Freigabe oder Material.'],
+   ['Überproduktion (Overproduction)','Mehr oder früher produzieren als gebraucht – gilt als schlimmste Art, weil sie andere erzeugt.','Eine Sorte „auf Vorrat“ laufen lassen, um einen Wechsel zu sparen.'],
+   ['Überbearbeitung (Over-processing)','Mehr Aufwand, als der Kunde braucht.','Doppelte Kontrollen oder Protokolle, die niemand auswertet.'],
+   ['Fehler / Nacharbeit (Defects)','Ausschuss, Nacharbeit, Reklamationen.','Falsch bedruckte Etiketten, unterfüllte Packungen.'],
+   ['Ungenutztes Mitarbeiterpotenzial (Skills)','Wissen und Ideen der Mitarbeitenden werden nicht genutzt – die „+1“.','Der Bediener kennt die Ursache des Kurzstillstands, aber niemand fragt ihn.']],
+  more:[['Mura (Ungleichmäßigkeit)','Schwankungen in Menge, Takt oder Ablauf – z. B. ständig wechselnde Auftragsgrößen. Mura erzeugt oft Muda und Muri.'],
+   ['Muri (Überlastung)','Mensch oder Maschine werden über ihre Grenze belastet – z. B. Linie dauerhaft über Nenntakt, Personal unterbesetzt.'],
+   ['Merkhilfe','TIMWOOD(S): Transport, Inventory, Motion, Waiting, Overproduction, Over-processing, Defects (+ Skills).']]},
+ w_vsm:{why:'Zeigt, wo im gesamten Fluss Zeit verloren geht – oft liegt ein Produkt viel länger, als es bearbeitet wird.',
+  how:['Produktfamilie wählen.','Ist-Zustand vor Ort aufnehmen, vom Versand rückwärts: Prozesse, Bestände, Zyklus- und Rüstzeiten, Informationsfluss.','Durchlaufzeit und Bearbeitungszeit vergleichen.','Soll-Zustand entwerfen (Fluss, Pull, Engpass) und Maßnahmenplan ableiten.']},
+ w_pdca:{why:'Verhindert Aktionismus: erst verstehen, klein testen, Wirkung prüfen, dann standardisieren.',
+  how:['Plan: Problem und Ist beschreiben, Ursache finden, Maßnahme und Ziel festlegen.','Do: im Kleinen umsetzen (eine Linie, eine Schicht).','Check: Wirkt es? Mit Daten vergleichen.','Act: wirkt → Standard; wirkt nicht → neu planen.']},
+ w_kvp:{t:'Kaizen / KVP',why:'Große Projekte enden, kleine Verbesserungen aus der Schicht bleiben – und die Leute werden zu Besitzern.',
+  how:['Probleme sichtbar machen (Board, Ideenkarten).','Kleine Verbesserungen schnell testen – Rückmeldung innerhalb weniger Tage.','Gute Lösungen standardisieren und auf andere Linien übertragen.','Für größere Themen: Kaizen-Workshop (2–5 Tage, fokussiertes Team).']},
+ w_smed:{why:'Kurze Wechsel bedeuten mehr Verfügbarkeit und kleinere Lose. Bei vielen Sorten ist das einer der größten Hebel auf die OEE.',
+  how:['Wechsel aufnehmen (mitlaufen oder filmen), alle Schritte mit Zeit notieren.','Intern und extern trennen.','Internes in Externes umwandeln (vorbereiten, vormontieren, bereitstellen).','Internes straffen (parallel arbeiten, Schnellverschlüsse, feste Reihenfolge), dann Externes straffen.','Als Standard festschreiben, trainieren, messen.'],
+  more:[['In der Lebensmittelproduktion','Ein Wechsel ist oft Rüsten + Reinigung + Freigabe. Vorbereitung vor den Stopp ziehen, Reinigung parallelisieren – Hygiene- und Allergenfreigabe nie kürzen. Großer Hebel: Sortenreihenfolge planen.']]},
+ w_std:{why:'Ohne Standard keine stabile Qualität über alle Schichten – und keine Basis, um Abweichungen zu erkennen und zu verbessern.',
+  how:['Beste aktuelle Methode mit den Leuten vor Ort aufnehmen.','Einfach dokumentieren: Schritte, Reihenfolge, Zeit, Qualitäts- und Sicherheitspunkte, Fotos.','Trainieren (vormachen, nachmachen) und von der Führung einfordern lassen.','Regelmäßig prüfen und verbessern.'],
+  more:[['Drei klassische Elemente','Taktzeit, Arbeitsreihenfolge, Standard-Bestand (Standard Work nach Toyota). Für einzelne Handgriffe: Ein-Punkt-Lektion.']]},
+ w_kanban:{why:'Verhindert Überproduktion und hohe Bestände, stabilisiert die Versorgung der Linie und macht Probleme sichtbar.',
+  how:['Verbrauch und Wiederbeschaffungszeit ermitteln.','Behältergröße und Kartenanzahl festlegen (grob: Verbrauch × Wiederbeschaffungszeit + Sicherheit).','Regel festlegen: leerer Behälter bzw. Karte löst Nachschub aus.','Kartenanzahl regelmäßig prüfen und schrittweise senken.'],
+  more:[['Push vs. Pull','Push: nach Plan/Prognose produzieren und „durchdrücken“. Pull: Verbrauch zieht Nachschub. Viele Werke kombinieren beides.']]},
+ w_poka:{why:'Menschen machen Fehler – gute Gestaltung verhindert, dass daraus Fehlware oder Unfälle werden.',
+  how:['Wiederkehrenden Fehler bzw. Verwechslung identifizieren.','Klären: Wo genau ist die Verwechslung möglich?','Lösung: verhindern (passt nur richtig) oder sofort erkennen (Sensor, Zählung, Farbe).','Wirkung prüfen.'],
+  more:[['Lebensmittel-Beispiel','Barcode-Prüfung von Etikett und Packmittel gegen die geplante Sorte vor dem Start; farbcodierte Formatteile je Sorte.']]},
+ w_jidoka:{why:'Fehler werden an der Quelle gestoppt statt am Ende aussortiert; Probleme werden sofort sichtbar und gelöst.',
+  how:['Abweichung erkennen (Sensor, Prüfung, Bediener).','Stoppen und Signal geben (Andon).','Sofort reagieren: Wer kommt in welcher Zeit? (Eskalationsregel)','Ursache abstellen (z. B. 5 Why), Standard anpassen.']},
+ w_sfm:{why:'Probleme werden täglich dort gelöst, wo sie entstehen – nicht Wochen später im Besprechungsraum.',
+  how:['Feste Runde je Ebene (Schicht → Bereich → Werk), kurzer Takt, im Stehen.','Wenige Kennzahlen am Board (Sicherheit, Qualität, Leistung/OEE, Maßnahmen).','Abweichung → Maßnahme mit Name und Termin; nicht lösbar → eskalieren.','Gemba-Rundgang der Führung, Standards vor Ort prüfen.']},
+ w_a3:{why:'Zwingt dazu, das Problem zu verstehen, bevor man über Lösungen redet – und macht den Stand für alle sichtbar.',
+  how:['Hintergrund und Problem in einem Satz.','Ist-Zustand mit Zahlen oder Bild.','Ziel.','Ursachenanalyse (5 Why, Ishikawa).','Maßnahmen mit Name und Termin.','Nachverfolgung: Wirkt es? Standard?']},
+ w_ishi:{why:'Verhindert Tunnelblick: Das Team sammelt alle möglichen Ursachen, bevor eine ausgewählt wird.',
+  how:['Problem in den „Kopf“ der Gräte schreiben.','Hauptgräten 6M: Mensch, Maschine, Material, Methode, Messung, Mitwelt.','Ursachen mit dem Team sammeln.','Wahrscheinlichste Ursachen vor Ort bzw. mit Daten prüfen, dann z. B. mit 5 Why vertiefen.']},
+ w_5why:{why:'Führt vom Symptom zur abstellbaren Ursache – sonst kommt das Problem wieder.',
+  how:['Problem konkret beschreiben (was, wo, wann).','„Warum?“ fragen – jede Antwort vor Ort prüfen.','Wiederholen, bis eine abstellbare Ursache erreicht ist (Faustregel: etwa fünfmal).','Maßnahme gegen die Ursache, Wirkung prüfen.']},
+ w_oee:{t:'OEE (Gesamtanlageneffektivität) + 6 große Verluste',why:'Zeigt, wie viel der geplanten Zeit wirklich Gutware wird – und in welchem Faktor die Linie verliert. Basis, um Verbesserungen zu priorisieren.',
+  how:['Definition klären (geplante Zeit, Umgang mit Reinigung und Pausen).','Verfügbarkeit = Laufzeit / geplante Zeit.','Leistung = (Menge × ideale Taktzeit) / Laufzeit.','Qualität = Gutmenge / Gesamtmenge; OEE = V × L × Q.','Verluste den 6 großen Verlusten zuordnen und den größten zuerst angehen.'],
+  more:[['6 große Verluste','Verfügbarkeit: Störungen, Rüsten/Sortenwechsel · Leistung: Kurzstillstände, reduzierte Geschwindigkeit · Qualität: Anlaufverluste, Ausschuss/Nacharbeit. Rechenbeispiel: Karte „OEE rechnen“.']]},
+ w_t_6v:{why:'Macht aus einer OEE-Zahl konkrete Ansatzpunkte.',how:['Stillstände und Verluste erfassen – auch Kurzstillstände.','Den 6 Verlusten bzw. V/L/Q zuordnen.','Pareto bilden und den größten Verlust zuerst angehen.']},
+ w_t8:{why:'TPM macht Anlagen störungsfrei und Produktion und Instandhaltung zu einem Team. Die 8 Säulen zeigen: Es ist mehr als „Bediener machen Wartung“.',
+  how:['Fundament 5S legen.','Verlustanalyse (OEE): größte Verluste bestimmen.','An einer Pilotanlage mit autonomer + geplanter Instandhaltung starten, Kobetsu Kaizen an den Top-Verlusten.','Training begleitend; weitere Säulen schrittweise ergänzen.']},
+ w_t_am:{t:'Autonome Instandhaltung (AI / Jishu Hozen) – 7 Schritte',why:'Bediener sind täglich an der Anlage und sehen Abweichungen zuerst. Aus „Ich bediene“ wird „Ich pflege meine Anlage“ – die Instandhaltung hat mehr Zeit für anspruchsvolle Aufgaben.',
+  how:['Grundreinigung – Reinigen ist Inspizieren, Mängelkarten.','Verschmutzungsquellen und schwer zugängliche Stellen beseitigen.','Vorläufige Standards für Reinigen, Inspizieren, Schmieren (CIL).','Gesamtinspektion – Anlagenfunktionen lernen.','Autonome Inspektion.','Standardisieren und Organisieren.','Autonomes Management.']},
+ w_t_kpi:{why:'Ein Board macht den Stand der Linie für jede Schicht in Sekunden sichtbar – und ist der Ort, an dem aus Abweichungen Maßnahmen werden.',
+  how:['Wenige Kennzahlen wählen (Sicherheit, Qualität, OEE/Stillstände, Maßnahmen).','Ziel und Ist sichtbar machen (grün/rot), von der Schicht selbst aktualisiert.','Feste Runde am Board, Maßnahmen mit Name und Termin.','Kennzahlen regelmäßig hinterfragen: Führt sie noch zu Handlung?']}};
+Object.entries(WX).forEach(([id,x])=>{const w=WISSEN.find(v=>v.id===id);if(w)Object.assign(w,x);});
+Object.entries({
+ w_tpm:{why:'Störungsfreie Anlagen gibt es nur, wenn Produktion und Instandhaltung gemeinsam Verantwortung tragen.',how:['Verluste messen (OEE).','Bediener in Reinigen/Inspizieren/Schmieren einbinden.','Instandhaltung plant vorbeugend; gemeinsame Runden. Details: Karten „TPM · Die 8 Säulen“ und „Autonome Instandhaltung“.']},
+ w_t_oee:{why:'Wer OEE sicher rechnen kann, argumentiert im Interview mit Zahlen statt mit Gefühl.',how:['Geplante Zeit, Stillstand, Menge, ideale Taktzeit und Gutmenge sammeln.','V, L und Q einzeln rechnen.','Multiplizieren – und den kleinsten Faktor als ersten Hebel benennen.']},
+ w_t_mtbf:{why:'Unterscheidet „fällt oft aus“ (MTBF) von „dauert lange“ (MTTR) – das führt zu ganz unterschiedlichen Maßnahmen.',how:['Laufzeit, Anzahl Ausfälle und Reparaturzeit erfassen.','MTBF und MTTR rechnen.','Niedrige MTBF → Ursachen abstellen; hohe MTTR → Ersatzteile, Werkzeug, Anleitung, Erreichbarkeit.']},
+ w_t_cil:{why:'Kleine tägliche Pflege verhindert große Ausfälle – und ist Kern der autonomen Instandhaltung (Schritt 3).',how:['Punkte mit Bedienern und Instandhaltung festlegen.','Markieren und Ein-Punkt-Lektion je Punkt.','Rundgang mit Checkliste pro Schicht, Abweichungen als Mängelkarte.']},
+ w_t_roll:{why:'Ein sichtbarer Erfolg an einer Anlage überzeugt mehr als jede Präsentation – und liefert die Standards für alle weiteren Linien.',how:['Ziel, Verlustanalyse, Lenkungskreis.','Pilotanlage mit willigem Meister, OEE vorher/nachher.','Modelllinie mit Standards, Trainings, Audits.','Ausrollen in Wellen mit Multiplikatoren.']},
+ w_t_food:{why:'Bei vielen Sorten sind Wechsel einer der größten OEE-Verluste – und Hygiene und Allergenschutz dürfen dabei nie leiden.',how:['Wechsel mitlaufen, intern/extern trennen.','Vorbereitung vor den Stopp ziehen, Reinigung parallel und in fester Reihenfolge.','QS früh einbinden, Freigabe nie kürzen.','Sortenreihenfolge mit der Planung optimieren.']}
+}).forEach(([id,x])=>{const w=WISSEN.find(v=>v.id===id);if(w&&!w.why)Object.assign(w,x);});
+QUIZ.push(
+ ['Wofür steht das erste S (Seiri)?',['Sortieren – Unnötiges entfernen','Säubern','Setzen','Sicherheit'],0,'Seiri = Sortieren: Nur was für die Arbeit gebraucht wird, bleibt im Bereich.'],
+ ['Was ist Seiton bei 5S?',['Setzen/Ordnung – fester, gekennzeichneter Platz für alles','Selbstdisziplin','Standardisieren','Sortieren'],0,'Seiton: Jedes Teil hat seinen Platz – z. B. Schattenbrett, Werkzeugwagen mit festen Fächern.'],
+ ['Warum gilt bei 5S „Säubern ist Inspizieren“?',['Beim Reinigen werden Leckagen, Verschleiß und lose Teile sichtbar','Weil die QS es vorschreibt','Weil dann kein Audit mehr nötig ist','Weil Reinigung die OEE nicht beeinflusst'],0,'Seiso: Wer reinigt, sieht Defekte früh – deshalb ist die Grundreinigung auch Schritt 1 der autonomen Instandhaltung.'],
+ ['Was passiert bei einer Rote-Karten-Aktion (5S)?',['Fragliche Gegenstände werden markiert und nach einer Frist entfernt, wenn sie keiner braucht','Mitarbeitende bekommen eine Verwarnung','Defekte Maschinen werden stillgelegt','Rote Karten markieren Allergenbereiche'],0,'Teil von Sortieren: markieren, Sammelzone, Frist – dann entscheiden.'],
+ ['Wozu dient ein Schattenbrett?',['Jedes Werkzeug hat einen sichtbaren Platz – fehlt eins, fällt es sofort auf','Als Sonnenschutz an der Linie','Zum Anzeigen der OEE','Für den Schichtplan'],0,'Visuelles Management zu Seiton (Setzen): Die Silhouette zeigt, was fehlt.'],
+ ['Was hält 5S nach dem Start am ehesten am Leben?',['Regelmäßiges 5S-Audit durch Team und Führung, Verlauf am Board','Eine große Aufräumaktion pro Jahr','Strengere Strafen','Der Consultant räumt selbst auf'],0,'Shitsuke (Selbstdisziplin) braucht Routine und Führung – kein Einmal-Event.'],
+ ['Wie hängt 5S mit TPM zusammen?',['5S ist das Fundament des TPM-Hauses','5S ist die achte TPM-Säule','Gar nicht – 5S ist nur fürs Büro','5S ersetzt die geplante Instandhaltung'],0,'Ohne Ordnung und Sauberkeit keine autonome Instandhaltung. Manche Werke ergänzen Sicherheit als 6. S (6S).'],
+ ['Farbcodierte Reinigungsgeräte für allergenhaltige und allergenfreie Bereiche – welches S?',['Setzen/Ordnung mit visuellem Management','Sortieren','Selbstdisziplin','Keines – das ist nur Hygiene'],0,'Feste, farblich gekennzeichnete Plätze und Geräte = Seiton plus visuelles Management – zugleich Schutz vor Allergen-Verschleppung.'],
+ ['Was bedeuten Mura und Muri?',['Mura = Ungleichmäßigkeit, Muri = Überlastung','Mura = Warten, Muri = Transport','Beides sind Rüstarten','Mura = Qualität, Muri = Menge'],0,'Muda (Verschwendung), Mura (Schwankung), Muri (Überlastung von Mensch/Maschine) – Mura verursacht oft die anderen beiden.'],
+ ['Was ist das Kernprinzip von Pull / Kanban?',['Nachschub erst auslösen, wenn verbraucht wurde','Möglichst viel auf Vorrat produzieren','Streng nach Prognose produzieren','Material einmal pro Woche liefern'],0,'Verbrauch löst Nachschub aus – das verhindert Überproduktion und hohe Bestände.'],
+ ['Zwei-Behälter-Kanban: Wann wird nachbestellt?',['Wenn der erste Behälter leer ist','Wenn beide leer sind','Einmal pro Schicht','Wenn der Meister es sagt'],0,'Der zweite Behälter überbrückt die Wiederbeschaffungszeit.'],
+ ['Was ist Jidoka?',['Bei Abweichung stoppen, statt Fehler weiterzuproduzieren','Vollautomatisierung ohne Menschen','Eine Rüstmethode','Eine Kennzahl für Bestände'],0,'„Automation mit menschlicher Intelligenz“ – Fehler an der Quelle stoppen.'],
+ ['Die Andon-Lampe leuchtet, aber niemand kommt. Was fehlt?',['Eine klare Reaktions- und Eskalationsregel','Eine hellere Lampe','Mehr Sensoren','Ein zweites KPI-Board'],0,'Andon wirkt nur, wenn geregelt ist, wer in welcher Zeit reagiert.']);
+/* Quiz → passende Lernkarte (erste passende Regel gewinnt) */
+const CARD_RE=[[/\b5S\b|Seiri|Seiton|Seiso|Shitsuke|Rote-Karten|Schattenbrett|zweite S|6S|farbcodiert/i,'w_5s'],[/Mura|Muri/i,'w_muda'],[/Kanban|Pull/i,'w_kanban'],[/Jidoka|Andon/i,'w_jidoka'],
+ [/autonomen Instandhaltung|AM-Schritt|CIL/i,'w_t_am'],[/Säulen|TPM-Haus|Kobetsu|Anlaufmanagement|Qualitätsinstandhaltung/i,'w_t8'],[/MTBF|MTTR/i,'w_t_mtbf'],[/großen Verluste|Kurzstillst/i,'w_t_6v'],[/OEE|Leistungsgrad/i,'w_oee'],
+ [/Allergen|Sortenwechsel/i,'w_t_food'],[/Rollout/i,'w_t_roll'],[/KPI-Board/i,'w_t_kpi'],[/SMED|Rüstzeit|Rüsten|Werkzeugwagen/i,'w_smed'],[/Verschwendung|Muda|warten/i,'w_muda'],[/PDCA|Check/i,'w_pdca'],[/\bA3\b/,'w_a3'],
+ [/5-Why/i,'w_5why'],[/Ishikawa|Fischgräte/i,'w_ishi'],[/Standard/i,'w_std'],[/Shopfloor/i,'w_sfm'],[/Wertstrom/i,'w_vsm'],[/Poka/i,'w_poka'],[/TPM/i,'w_tpm'],[/Kaizen|KVP/i,'w_kvp']];
+function quizCard(i){const it=QUIZ[i],t=it[0]+' '+it[1][it[2]];const r=CARD_RE.find(([re])=>re.test(t));return r?WISSEN.find(w=>w.id===r[1]):null;}
+function cardLink(i,cls){const w=quizCard(i);return w?'<a class="btn sm'+(cls?' '+cls:'')+'" href="#lib/wissen/'+w.id+'">📖 Lernkarte: '+esc(w.t)+'</a>':'';}
+function wCard(w,open){return '<details class="wk" id="wk_'+w.id+'"'+(open?' open data-focus="1"':'')+'><summary>'+esc(w.t)+'</summary><div class="lbl">Was ist das?</div><p>'+fmt(w.def)+'</p>'
+ +(w.why?'<div class="lbl">Warum wichtig</div><p>'+fmt(w.why)+'</p>':'')
+ +(w.how?'<div class="lbl">So gehst du vor</div><ol class="steps">'+w.how.map(x=>'<li>'+fmt(x)+'</li>').join('')+'</ol>':'')
+ +(w.sub?w.sub.map(([n,m,e,f])=>'<div class="wsub"><b>'+esc(n)+'</b><br>'+fmt(m)+(e?'<br><span class="hint">Beispiel:</span> '+fmt(e):'')+(f?'<br><span class="hint">Typischer Fehler:</span> '+fmt(f):'')+'</div>').join(''):'')
+ +'<div class="lbl">'+esc(w.bl||'Beispiel aus deinem Rüsten')+'</div><p>'+fmt(w.bsp)+'</p>'
+ +(w.more?w.more.map(([l,t])=>'<div class="lbl">'+esc(l)+'</div><p>'+fmt(t)+'</p>').join(''):'')
+ +'<div class="lbl">So sagst du es im Gespräch</div><p><b>'+fmt(w.say)+'</b></p><div class="lbl">Typische Falle im Interview</div><p>'+fmt(w.falle)+'</p></details>';}
 const QUIZ_CORE=QUIZ.length;
 QUIZ.push(
  ['Wie viele Säulen hat das klassische TPM-Haus – und was ist das Fundament?',['8 Säulen, Fundament 5S','5 Säulen, Fundament OEE','7 Säulen, Fundament Kaizen','4 Säulen, Fundament Six Sigma'],0,'Acht Säulen auf dem Fundament 5S.'],
@@ -931,8 +1044,8 @@ function finishWave(){const m=M(),b=m.b;b.done=true;const sc=waveScore(b);b.scor
   else b.msg='Der Tower hält – Genauigkeit '+Math.round(sc*100)+' %, nötig sind '+Math.round(L.need*100)+' %.';
   m.hp=Math.min(100,m.hp+15);}
  else if(b.type==='jungle'){b.msg='Jungle-Camp geräumt.';m.hp=Math.min(100,m.hp+10);}
- else if(b.type==='boss'){if(b.lives>0){S.boss.wins++;S.shield=1;gain(150,150);snd('win');b.msg='Der Alte Rüster ist besiegt! Drop: Schild der Standardarbeit (ein Extra-Leben).';m.boss='sieg';}
-  else{b.msg='Der Alte Rüster war zu stark. Dein Schild-Bonus ist verbraucht – versuch es später nochmal.';m.boss='niederlage';}}
+ else if(b.type==='boss'){if(b.lives>0){S.boss.wins++;S.shield=1;gain(150,150);snd('win');b.msg='Lean-Gesamtprüfung bestanden! Drop: Schild der Standardarbeit (ein Extra-Leben).';m.boss='sieg';}
+  else{b.msg='Die Lean-Gesamtprüfung war diesmal zu schwer. Dein Schild-Bonus ist verbraucht – versuch es später nochmal.';m.boss='niederlage';}}
  else if(b.type==='ancient'){const pts=Math.round(sc*ANC_N*2)/2;b.pts=pts;if(pts>=ANC_NEED){S.ancient.wins++;save();return endMatch('sieg');}else{save();return endMatch('ancient');}}
  save();render();window.scrollTo(0,0);}
 function bossLivesCheck(){const b=M().b;if(b.type==='boss'&&b.lives<=0){b.done=true;finishWave();return true;}return false;}
@@ -992,16 +1105,16 @@ V.map=()=>{const m=M();if(!m)return V.menu();const op=ancientOpen(),tot=S.towers
  const lb=l=>'<button class="lanebtn" data-act="lane" data-l="'+l+'"><span><span class="tw '+twr(l,1)+'"></span><span class="tw '+twr(l,2)+'"></span></span><span><span class="t">'+LANES[l].n+'</span><br><span class="hint">'+LANES[l].s+' · Tower fällt ab '+Math.round(LANES[l].need*100)+' % Genauigkeit</span></span></button>';
  return '<div class="grid2"><div class="panel">'+mapSVG()+'<p class="hint" style="text-align:center">Tower: '+tot+' / 6 zerstört · Season '+S.season+'</p></div><div><div class="panel job"><h3>Mein Vorstellungsgespräch · Lean & TPM Consultant</h3>'+lb('tpm')+lb('job')+'<a class="btn sm" href="#stelle">Interview-Modus: Stelle, Fragen, Rückfragen</a></div><div class="panel"><h3>Lanes</h3>'+lb('mid')+lb('top')+lb('bot')
  +'<button class="lanebtn" data-act="go" data-to="jungle"><span class="t">Jungle · Finde die Kill-Phrase</span><span class="hint">&nbsp;5 schnelle Runden, je 10 s</span></button>'
- +'<button class="lanebtn" data-act="go" data-to="boss"><span><span class="t">Boss · Der Alte Rüster</span><br><span class="hint">10 gemischte Quizfragen, 3 Leben'+(S.shield?' (+1 durch Schild)':'')+' · Drop: Schild der Standardarbeit</span></span></button>'
+ +'<button class="lanebtn" data-act="go" data-to="boss"><span><span class="t">Boss · Lean-Gesamtprüfung</span><br><span class="hint">10 gemischte Quizfragen, 3 Leben'+(S.shield?' (+1 durch Schild)':'')+' · Drop: Schild der Standardarbeit</span></span></button>'
  +'<button class="lanebtn" data-act="go" data-to="ancient"'+(op?'':' disabled')+'><span><span class="t">Ancient · Prüfung</span><br><span class="hint">'+(op?'5 Gesprächsfragen am Stück (Motivation, Praxisbeispiel, Widerstand, Schwäche + 1 Zufall), kein Überspringen. Ab 3 von 5 Punkten fällt das Ancient.':'Gesperrt: beide Mid-Tower + insgesamt 4 Tower zerstören ('+tot+'/4, Mid '+S.towers.mid+'/2).')+'</span></span></button></div>'
- +'<div class="row"><a class="btn" href="#shop">Shop ('+S.gold+' Gold)</a><button class="btn red" data-act="gg">GG – Match beenden</button></div>'+(t>=15?'<p class="hint">Du spielst seit '+t+' min – guter Moment für GG.</p>':'')+'</div></div>';};
+ +'<div class="row"><a class="btn" href="#lib/wissen">📖 Lernkarten</a><a class="btn" href="#shop">Shop ('+S.gold+' Gold)</a><button class="btn red" data-act="gg">GG – Match beenden</button></div>'+(t>=15?'<p class="hint">Du spielst seit '+t+' min – guter Moment für GG.</p>':'')+'</div></div>';};
 V.shop=()=>'<h1>Shop</h1><p class="hint">Gold: <b style="color:var(--gold)">'+S.gold+'</b> · Items gelten in allen Matches.</p>'
  +Object.entries(ITEMS).map(([k,it])=>'<div class="shopItem">'+it.ic+'<div style="flex:1"><b>'+it.n+'</b> <span class="chip">'+(S.items[k]||0)+' im Inventar</span><br><span class="hint">'+esc(it.d)+'</span></div><button class="btn gold" data-act="buy" data-it="'+k+'"'+(S.gold<it.p?' disabled':'')+'>'+it.p+' Gold</button></div>').join('')
  +'<div class="row"><a class="btn" href="'+(M()?'#map':'#menu')+'">Zurück</a></div>';
 
 /* Battle */
 function tgtBar(b){const r=b.res.filter(x=>x!=null);
- if(b.type==='boss'){const left=b.creeps.length-b.res.filter(x=>x!=null).length;return '<div class="row">'+BOSS_SVG.replace('CLS',b.done?'dead':'')+'<div style="flex:1"><b>Der Alte Rüster</b> <span class="chip neu">Leben: '+'♥'.repeat(Math.max(0,b.lives))+'</span><div class="bar boss big"><i style="width:'+(left/b.creeps.length*100)+'%"></i></div></div></div>';}
+ if(b.type==='boss'){const left=b.creeps.length-b.res.filter(x=>x!=null).length;return '<div class="row">'+BOSS_SVG.replace('CLS',b.done?'dead':'')+'<div style="flex:1"><b>Lean-Gesamtprüfung</b> <span class="chip neu">Leben: '+'♥'.repeat(Math.max(0,b.lives))+'</span><div class="bar boss big"><i style="width:'+(left/b.creeps.length*100)+'%"></i></div></div></div>';}
  if(b.type==='ancient'){const p=b.res.reduce((s,x)=>s+(x==='sitzt'?1:x==='wackelt'?.5:0),0);return '<div class="row">'+ANC_SVG.replace('CLS','')+'<div style="flex:1"><b>Ancient · Prüfung</b> <span class="hint">Punkte '+p+' / '+ANC_N+' (nötig: '+ANC_NEED+') · kein Überspringen</span><div class="bar tw big"><i style="width:'+Math.max(0,100-p/ANC_NEED*100)+'%"></i></div></div></div>';}
  if(LANES[b.type]){const k=S.towers[b.type];const need=Math.ceil(LANES[b.type].need*(b.type==='top'?4:b.type==='tpm'?TPM_N:b.creeps.length));const hits=(b.type==='mid'||b.type==='job')?b.res.reduce((s,x)=>s+(x==='sitzt'?1:x==='wackelt'?.5:0),0):r.filter(x=>x==='lh'||x==='ok'||x==='dn').length;
   return '<div class="row">'+TOWER_SVG.replace('CLS',b.tower?'dead':'')+'<div style="flex:1"><b>'+(k>=2&&!b.tower?'Lane gepusht':'Tower T'+Math.min(2,k+(b.tower?0:1)))+'</b> <span class="hint">'+LANES[b.type].n+'</span><div class="bar tw big"><i style="width:'+(b.tower?0:Math.max(0,100-hits/need*100))+'%"></i></div></div></div>';}
@@ -1018,7 +1131,7 @@ V.battle=()=>{const m=M();if(!m||!m.b)return V.map();const b=m.b,typeN={top:'Top
   +'<div class="qbig">'+esc(it[0])+'</div>';
   if(!done)h+='<div class="items">'+itemBtn('hint','useHint',c.hidden)+itemBtn('boots','useBoots')+itemBtn('second','useSecond',c.second||c.usedSecond)+'</div>'+(c.second?'<p class="hint">Zweite Chance aktiv.</p>':'');
   h+=c.order.map((oi,k)=>{let cl='opt';if(done){if(oi===it[2])cl+=' right';else if(k===c.ans)cl+=' wrong';}else if((c.tried||[]).includes(k))cl+=' wrong';if(!done&&(c.hidden||[]).includes(k))cl+=' gone';return '<button class="'+cl+'" data-act="qa" data-k="'+k+'"'+(done||(c.hidden||[]).includes(k)||(c.tried||[]).includes(k)?' disabled':'')+'>'+esc(it[1][oi])+'</button>';}).join('');
-  if(done)h+='<div class="banner '+(c.res==='lh'?'lh':c.res==='ok'?'ok':'miss')+'">'+(c.res==='lh'?'Last Hit!':c.res==='ok'?'Treffer':c.ans<0?'Zeit abgelaufen':'Daneben')+'</div><div class="fbbox '+(c.res==='bad'?'bad':'ok')+'">'+fmt(it[3])+'</div><div class="row"><span class="sp"></span><button class="btn gold" data-act="next">Weiter →</button></div>';
+  if(done)h+='<div class="banner '+(c.res==='lh'?'lh':c.res==='ok'?'ok':'miss')+'">'+(c.res==='lh'?'Last Hit!':c.res==='ok'?'Treffer':c.ans<0?'Zeit abgelaufen':'Daneben')+'</div><div class="fbbox '+(c.res==='bad'?'bad':'ok')+'">'+(c.res==='bad'?'<b>Erklärung:</b> ':'')+fmt(it[3])+'</div><div class="row">'+cardLink(c.i,c.res==='bad'?'gold':'')+'<span class="sp"></span><button class="btn gold" data-act="next">Weiter →</button></div>';
   return h+'</div>';}
  if(c.k==='fc'){const w=WISSEN.find(x=>x.id===c.id);
   return h+'<div class="panel"><div class="row">'+CREEP_SVG.replace('CLS','')+'<div><b>Karteikarten-Creep</b><br><span class="hint">Erst selbst erklären, dann umdrehen.</span></div></div><div class="read flip'+(c.flip?' back':'')+'" data-act="flip" id="flipcard" style="margin-top:10px">'+(c.flip?'<div><h3>'+esc(w.t)+'</h3><p>'+fmt(w.def)+'</p><p><b>Im Gespräch:</b> '+fmt(w.say)+'</p><p class="hint">Falle: '+fmt(w.falle)+'</p></div>':'<div>'+esc(w.t)+'<div class="hint" style="font-weight:400;margin-top:10px">Was ist das – in einem Satz? Tippen zum Umdrehen.</div></div>')+'</div>'
@@ -1058,8 +1171,8 @@ V.lib=(sub,id)=>{
   return '<h1>Lernbibliothek</h1>'+libTabs('')+'<div class="panel"><div class="row"><span class="chip grp">'+esc(GL[q.g])+'</span>'+chip(rateOf(id))+'<span class="sp"></span><a href="#lib">← Liste</a></div><div class="qbig">'+esc(q.q)+'</div>'
   +(libShown[id]?fullCard(q):'<div class="read">'+secPruef(q)+secGer(q)+'<div class="sec" style="text-align:center"><button class="btn gold" data-act="libReveal" data-id="'+id+'">Musterantwort zeigen</button><p class="hint">Erst selbst antworten – dann vergleichen.</p></div>'+secFalle(q)+secNach(q)+'</div>')
   +'<h3 style="margin-top:14px">Wie sicher sitzt die Antwort?</h3>'+rateBtns('libRate')+'</div><div class="row">'+(pv?'<a class="btn" href="#lib/q/'+pv+'">← Vorige</a>':'')+'<span class="sp"></span>'+(nx?'<a class="btn gold" href="#lib/q/'+nx+'">Nächste →</a>':'')+'</div>';}
- if(sub==='wissen')return '<h1>Lernbibliothek</h1>'+libTabs('wissen')+WISSEN.map(w=>'<details class="wk"><summary>'+esc(w.t)+'</summary><div class="lbl">In einem Satz</div><p>'+fmt(w.def)+'</p><div class="lbl">'+esc(w.bl||'Beispiel aus deinem Rüsten')+'</div><p>'+fmt(w.bsp)+'</p><div class="lbl">So sagst du es im Gespräch</div><p><b>'+fmt(w.say)+'</b></p><div class="lbl">Typische Falle</div><p>'+fmt(w.falle)+'</p></details>').join('');
- if(sub==='quiz')return '<h1>Lernbibliothek</h1>'+libTabs('quiz')+'<p class="hint">Alle '+QUIZ.length+' Quizfragen mit Lösung – zum Nachlesen.</p>'+QUIZ.map((it,i)=>'<details class="wk"><summary>'+(i+1)+'. '+esc(it[0])+'</summary><p><b>'+esc(it[1][it[2]])+'</b></p><p>'+fmt(it[3])+'</p></details>').join('');
+ if(sub==='wissen')return '<h1>Lernbibliothek</h1>'+libTabs('wissen')+'<p class="hint">Jede Karte: Was ist das? · Warum wichtig · So gehst du vor · Beispiel · Interview-Falle. Erst lesen, dann quizzen.</p><div class="tabs">'+WISSEN.map(w=>'<a href="#lib/wissen/'+w.id+'" class="'+(id===w.id?'on':'')+'">'+esc(w.t.split(' – ')[0].split(' (')[0])+'</a>').join('')+'</div>'+WISSEN.map(w=>wCard(w,id===w.id)).join('');
+ if(sub==='quiz')return '<h1>Lernbibliothek</h1>'+libTabs('quiz')+'<p class="hint">Alle '+QUIZ.length+' Quizfragen mit Lösung – zum Nachlesen.</p>'+QUIZ.map((it,i)=>'<details class="wk"><summary>'+(i+1)+'. '+esc(it[0])+'</summary><p><b>'+esc(it[1][it[2]])+'</b></p><p>'+fmt(it[3])+'</p>'+cardLink(i)+'</details>').join('');
  if(sub==='karten'){if(!LF)LF={cards:shuffle([...WISSEN.map(w=>({id:w.id,f:w.t,b:'<p>'+fmt(w.def)+'</p><p><b>Im Gespräch:</b> '+fmt(w.say)+'</p>'})),...QS.map(q=>({id:'k_'+q.id,f:q.q,b:'<p><b>Kern:</b> '+fmt(q.kern)+'</p>'}))]),i:0,flip:false};
   if(LF.i>=LF.cards.length)return '<h1>Lernbibliothek</h1>'+libTabs('karten')+'<div class="panel"><h2>Stapel durch</h2><p>'+LF.cards.filter(c=>S.fc[c.id]).length+' von '+LF.cards.length+' gewusst.</p><button class="btn gold" data-act="lfNew">Neu mischen</button></div>';
   const c=LF.cards[LF.i];return '<h1>Lernbibliothek</h1>'+libTabs('karten')+'<p class="hint">Karte '+(LF.i+1)+' / '+LF.cards.length+'</p><div class="read flip'+(LF.flip?' back':'')+'" data-act="lflip" id="lflip">'+(LF.flip?'<div><div class="hint">'+esc(c.f)+'</div>'+c.b+'</div>':'<div>'+esc(c.f)+'</div>')+'</div><div class="row" style="margin-top:12px"><button class="btn" data-act="lfPrev"'+(LF.i?'':' disabled')+'>← Zurück</button><span class="sp"></span>'+(LF.flip?'<button class="btn" data-act="lfAgain">Nochmal</button><button class="btn gold" data-act="lfKnow">Gewusst</button>':'<button class="btn gold" data-act="lflip">Umdrehen</button>')+'</div>';}
@@ -1110,7 +1223,7 @@ function go(h){if(location.hash!==h)history.pushState(null,'',h);render();window
 window.addEventListener('popstate',()=>render());
 function render(){const p=(location.hash||'#menu').slice(1).split('/');let r=p[0]||'menu';if(!V[r])r='menu';
  if((r==='map'||r==='battle')&&!M())r='menu';if(r==='battle'&&!M().b)r='map';
- $('#hud').innerHTML=hud();$('#main').innerHTML=V[r](p[1],p[2]);}
+ $('#hud').innerHTML=hud();$('#main').innerHTML=V[r](p[1],p[2]);const fx=document.querySelector('[data-focus]');if(fx)setTimeout(()=>fx.scrollIntoView({block:'start'}),0);}
 let TI=null;function tStop(){}
 function tick(){const m=M();if(!m)return;const ck=$('#mclock');if(ck){const t=Math.floor((Date.now()-m.start)/1000);ck.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');}
  if(location.hash!=='#battle'||document.hidden)return;const c=cur();if(!c||c.left==null||c.ans!=null||c.rev)return;if(c.k==='q'&&c.left<=0)return;
